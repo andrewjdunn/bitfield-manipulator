@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="10%p"
+    android:horizontalGap="0px"
+    android:verticalGap="0px"
+    android:keyHeight="75px"
+    >
+
+	<Row >
+		<Key android:keyLabel="0" />
+		<Key android:keyLabel="1" />
+		<Key android:keyLabel="2" />
+		<Key android:keyLabel="3" />
+		<Key android:keyLabel="4" />
+		<Key android:keyLabel="5" />
+		<Key android:keyLabel="6" />
+		<Key android:keyLabel="7" />
+		<Key android:keyLabel="8" />
+		<Key android:keyLabel="9" />
+		</Row>
+		
+		<Row android:keyWidth="9%p">
+		<Key android:keyLabel="A" />
+		<Key android:keyLabel="B" />
+		<Key android:keyLabel="C" />
+		<Key android:keyLabel="D" />
+		<Key android:keyLabel="E" />
+		<Key android:keyLabel="F" />
+		
+		<Key android:horizontalGap="10%p" android:keyIcon="@android:drawable/ic_input_delete" android:codes="8" android:keyWidth="11%p"/>		
+		<Key android:keyLabel="Next" android:codes="13" android:keyWidth="25%p"/>
+
+	</Row>     
+</Keyboard>

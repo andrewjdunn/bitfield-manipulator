@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content">
+    <EditText
+    	android:hint="@string/name"
+    	android:layout_marginLeft="10dp"
+    	android:layout_marginRight="10dp"
+    	android:layout_height="wrap_content"
+    	android:layout_width="fill_parent"
+    	android:inputType="textPersonName"
+    	android:ems="25"    	
+    	android:id="@+id/editSectionName">    	
+        <requestFocus></requestFocus>
+    </EditText>
+    
+    
+    <LinearLayout android:layout_alignRight="@id/editSectionName" android:layout_alignLeft="@id/editSectionName" android:layout_below="@id/editSectionName" android:layout_width="fill_parent" android:id="@+id/linearLayout2" android:layout_height="wrap_content">
+        <EditText android:hint="@string/start" android:layout_height="wrap_content" android:layout_weight="1" android:id="@+id/startpos" android:layout_width="wrap_content" android:inputType="number"></EditText>
+        <EditText android:hint="@string/end" android:layout_height="wrap_content" android:layout_weight="1" android:id="@+id/endpos" android:layout_width="wrap_content" android:inputType="number"></EditText>
+    </LinearLayout>
+    
+	  <Button
+	   android:layout_alignLeft="@id/editSectionName"
+	   android:layout_below="@id/linearLayout2" 
+	   android:layout_marginLeft="5dp"
+	   android:layout_height="wrap_content"
+	   android:layout_width="wrap_content"     
+	   android:id="@+id/saveSection"
+	   android:text="@string/save"/>
+	   
+	  <Button
+	  android:layout_marginRight="5dp"
+	   android:layout_alignRight="@id/editSectionName"
+	   android:layout_below="@id/linearLayout2" 
+	   android:layout_height="wrap_content" 
+	   android:layout_width="wrap_content" 
+	   android:text="@string/cancel" 
+	   android:id="@+id/cancelSection"/>	  
+    
+</RelativeLayout>
+

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+ android:layout_width="fill_parent"
+ android:layout_height="fill_parent">
+ <LinearLayout android:id="@+id/linearLayout1" android:layout_height="wrap_content" android:layout_width="fill_parent">        
+ </LinearLayout>
+ 
+ 
+ <TextView 
+  android:id="@+id/helptext"
+  android:layout_width="fill_parent" 
+  android:layout_height="wrap_content"
+  android:textAppearance="?android:attr/textAppearanceSmall"
+  android:text="@string/helpmain"
+  android:textColor="@android:color/tertiary_text_dark"
+  android:layout_alignParentBottom="true"
+  android:gravity="center_horizontal"
+  android:padding="30dp"
+  android:paddingLeft="100dp"
+  android:paddingRight="100dp" />
+ 
+ <ListView 
+  android:layout_above="@id/helptext"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:id="@+id/fieldList"
+  android:layout_alignParentTop="true"></ListView>
+ 
+</RelativeLayout>

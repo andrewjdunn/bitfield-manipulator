@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Bitfield Manipulator</string>
+    <string name="start">Start</string>
+    <string name="end">End</string>
+    <string name="name">Name</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="helpmain">Use menu to add new bit fields, long press to delete a bit field</string>
+    <string name="helpsections">Use menu to add new sections or edit the fields name</string>
+    <string name="helpsections2">Use long press to edit a section</string>
+    <string name="invalidsection">Invalid start / end values</string>
+    <string name="binaryInput">Binary input</string>
+    <string name="hexInput">Hex input</string>
+    <string name="decimalInput">Decimal input</string>
+</resources>

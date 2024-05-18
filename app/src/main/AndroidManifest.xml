@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="com.hciware.bitfields">
+    Probabky easiet to pull out all the source files - create new empty project with the right name and copy the source in and then fix the wanrings...
+    <application android:icon="@mipmap/icon" android:label="@string/app_name"
+        android:allowBackup="true"
+        android:fullBackupContent="@xml/backup_descriptor">
+        <activity android:name=".BitfieldsActivity"
+                  android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name="FieldViewActivity"/>
+    </application>
+</manifest>

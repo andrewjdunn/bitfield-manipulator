@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<RelativeLayout 
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:id="@+id/parentFrame"
+  android:background="@drawable/edit_view_background"
+  android:padding="10dp"  
+   >  
+  
+  <LinearLayout  
+   android:id="@+id/fieldContent"
+   android:orientation="vertical"
+   android:layout_width="fill_parent"
+   android:layout_height="wrap_content"
+   android:layout_alignParentTop="true" >  
+  
+     <com.hciware.bitfields.BinaryEditText android:id="@+id/editBin" android:hint="@string/binaryInput" android:layout_height="wrap_content" android:layout_width="fill_parent">
+      <requestFocus></requestFocus>
+     </com.hciware.bitfields.BinaryEditText>
+     <LinearLayout android:id="@+id/linearLayout3" android:layout_height="wrap_content" android:layout_width="fill_parent">
+      <EditText android:id="@+id/editHex" android:hint="@string/hexInput" android:layout_weight="1" android:layout_height="wrap_content" android:layout_width="wrap_content" ></EditText>
+      <EditText android:id="@+id/editDec" android:hint="@string/decimalInput" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_weight="1"></EditText>
+     </LinearLayout>
+              
+	</LinearLayout>
+	
+	<com.hciware.keyboards.BFKeyboardView
+     android:id="@+id/bFKeyboardView"
+     android:layout_width="fill_parent"
+     android:layout_height="wrap_content"         
+     android:layout_alignParentBottom="true" />
+    
+    <FrameLayout
+    	android:layout_below="@id/fieldContent"
+		android:layout_above="@id/bFKeyboardView"
+		android:layout_height="wrap_content" android:layout_width="fill_parent" > l 
+	    
+	    <ListView	      
+		 android:id="@+id/sectionList"
+		 android:layout_width="fill_parent"
+		 android:layout_height="fill_parent"/>
+		 
+		 <TextView android:id="@+id/viewhelptext" android:text="@string/helpsections" android:layout_height="wrap_content" android:layout_width="fill_parent" android:textAppearance="?android:attr/textAppearanceSmall" android:layout_gravity="bottom"
+		  android:textColor="@android:color/tertiary_text_dark"		  
+		  android:gravity="center_horizontal"
+		  android:padding="5dp"
+		  android:paddingLeft="100dp"
+		  android:paddingRight="100dp" />		 
+	</FrameLayout>
+</RelativeLayout >
