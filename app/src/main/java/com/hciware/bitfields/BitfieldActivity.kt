@@ -23,7 +23,8 @@ class BitfieldActivity : ComponentActivity() {
                     ListScreen(bitFieldsViewModel = bitFieldsViewModel)
                 } else {
                     bitFieldsViewModel.selectedBitField?.description?.name?.let {
-                        DetailScreen(name = it)
+                        // tODO: !! not likey. also the ?. we can be sure if we get here that nothing is null?
+                        DetailScreen(name = it, fields = bitFieldsViewModel.selectedBitField?.sections!!)
                     }
                 }
             }

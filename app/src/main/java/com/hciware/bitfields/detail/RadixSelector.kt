@@ -1,10 +1,8 @@
 package com.hciware.bitfields.detail
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -20,7 +18,7 @@ import com.hciware.bitfields.ui.theme.BitfieldmanipulatorTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RadixSelector(title: String, modifier: Modifier = Modifier) {
-    Column(modifier.background(MaterialTheme.colorScheme.surface)) {
+    Column(modifier) {
         Text(title)
         val selectedIndex = 0
         val options = listOf("Binary", "Decimal", "Hexadecimal")
@@ -28,8 +26,7 @@ fun RadixSelector(title: String, modifier: Modifier = Modifier) {
             options.forEachIndexed {
                 index, label -> SegmentedButton(selected = index == selectedIndex,
                 onClick = {},
-                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size)){
-
+                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size)) {
                     Text(label)
             }
             }
@@ -42,6 +39,6 @@ fun RadixSelector(title: String, modifier: Modifier = Modifier) {
 @Composable
 fun PreviewRadixSelector() {
     BitfieldmanipulatorTheme {
-        RadixSelector(title = "Overall Number", modifier = Modifier.fillMaxSize())
+        RadixSelector(title = "Overall Number", modifier = Modifier.fillMaxWidth())
     }
 }
