@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Bitfield Manipulator</string>
+    <string name="app_name">Bitfields</string>
     <string name="start">Start</string>
     <string name="end">End</string>
     <string name="name">Name</string>
@@ -13,4 +13,5 @@
     <string name="binaryInput">Binary input</string>
     <string name="hexInput">Hex input</string>
     <string name="decimalInput">Decimal input</string>
+    <string name="title_activity_bit_field_details">BitFieldDetails</string>
 </resources>

@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <application android:icon="@mipmap/icon" android:label="@string/app_name"
+
+    <application
         android:allowBackup="true"
-        android:dataExtractionRules="@xml/backup_descriptor">
-        <activity android:name=".BitfieldsActivity" android:exported="true">
+        android:dataExtractionRules="@xml/backup_descriptor"
+        android:icon="@mipmap/icon"
+        android:label="@string/app_name">
+        <activity
+            android:name=".BitfieldActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Bitfieldmanipulator">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="FieldViewActivity"/>
+        <activity android:name=".FieldViewActivity" />
     </application>
+
 </manifest>
