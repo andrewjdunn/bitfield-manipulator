@@ -3,6 +3,8 @@ package com.hciware.bitfields.detail
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -25,13 +27,14 @@ fun DetailContent(fields: List<BitfieldSection>,
                   overallValueModeSelected: (BitFieldsViewModel.RadixMode) -> Unit,
                   fieldValuesMode: BitFieldsViewModel.RadixMode,
                   fieldValuesModeSelected: (BitFieldsViewModel.RadixMode) -> Unit,
+                  bitCount: Int,
                   modifier: Modifier = Modifier) {
-    Column (modifier) {
-        // TODO: Model can supply this - the last end bit rounding to 8?
-        val bitCount = 8
-        OverallValue(bitCount = bitCount, overallValueMode, overallValueModeSelected)
-        BitRuler(bitCount = bitCount)
-        FieldValues(fields, fieldValuesMode, fieldValuesModeSelected)
+    Column (modifier.verticalScroll(rememberScrollState())) {
+        // TODO: Any need to add to the view model?
+        val commonScrollState = rememberScrollState()
+        OverallValue(bitCount = bitCount, overallValueMode, overallValueModeSelected, commonScrollState)
+        BitRuler(commonScrollState, bitCount = bitCount)
+        FieldValues(fields, fieldValuesMode, fieldValuesModeSelected, commonScrollState)
     }
 }
 
@@ -45,8 +48,9 @@ fun PreviewDetailContent() {
             {_ ->},
             model.fieldsValueMode,
             {_ ->},
+            8,
             modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background))
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background))
     }
 }

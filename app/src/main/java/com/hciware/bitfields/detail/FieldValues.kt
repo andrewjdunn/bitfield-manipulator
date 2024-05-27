@@ -1,7 +1,9 @@
 package com.hciware.bitfields.detail
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -14,13 +16,14 @@ import com.hciware.bitfields.ui.theme.BitfieldmanipulatorTheme
 fun FieldValues(fields: List<BitfieldSection>,
                 mode: BitFieldsViewModel.RadixMode,
                 modeSelected: (BitFieldsViewModel.RadixMode) -> Unit,
+                commonScrollState: ScrollState,
                 modifier: Modifier = Modifier) {
     Column(modifier) {
 
         RadixSelector(title = "Field Values", mode, modeSelected)
         // And now a list of fields...
         // TODO: Nomenclature is getting messy - the landing page is a list of bitfields - but its not its a list of a list of bitfields
-        FieldList(fields)
+        FieldList(fields, mode, commonScrollState)
     }
 
 }
@@ -34,6 +37,7 @@ fun PreviewFieldValues() {
         FieldValues(model.bitfields[0].sections,
             model.fieldsValueMode,
             { _ -> },
+            rememberScrollState(),
             Modifier.fillMaxWidth())
     }
 }

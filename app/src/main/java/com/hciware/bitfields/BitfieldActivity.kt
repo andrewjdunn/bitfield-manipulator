@@ -9,6 +9,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hciware.bitfields.detail.DetailScreen
 import com.hciware.bitfields.list.ListScreen
 import com.hciware.bitfields.model.BitFieldsViewModel
+import com.hciware.bitfields.model.bitCount
 import com.hciware.bitfields.ui.theme.BitfieldmanipulatorTheme
 
 class BitfieldActivity : ComponentActivity() {
@@ -29,7 +30,8 @@ class BitfieldActivity : ComponentActivity() {
                             bitFieldsViewModel.overallValueMode,
                             {mode -> bitFieldsViewModel.overallValueMode = mode},
                             bitFieldsViewModel.fieldsValueMode,
-                            {mode -> bitFieldsViewModel.fieldsValueMode = mode}
+                            {mode -> bitFieldsViewModel.fieldsValueMode = mode},
+                            bitFieldsViewModel.selectedBitField?.bitCount()!!
                             )
                     }
                 }

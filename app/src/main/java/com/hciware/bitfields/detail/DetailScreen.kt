@@ -22,6 +22,7 @@ fun DetailScreen(name: String,
                  overallValueModeSelected: (BitFieldsViewModel.RadixMode) -> Unit,
                  fieldValuesMode: BitFieldsViewModel.RadixMode,
                  fieldValuesModeSelected: (BitFieldsViewModel.RadixMode) -> Unit,
+                 bitCount: Int,
                  modifier: Modifier = Modifier) {
     Scaffold (
         topBar = { TopAppBar(title = { Text(name) }) },
@@ -32,6 +33,7 @@ fun DetailScreen(name: String,
             overallValueModeSelected,
             fieldValuesMode,
             fieldValuesModeSelected,
+            bitCount,
             modifier.padding(padding))})
 }
 
@@ -45,6 +47,7 @@ fun GreetingPreview() {
     BitfieldmanipulatorTheme {
         DetailScreen(name, fields,
             model.overallValueMode, {_ ->},
-            model.fieldsValueMode, {_ ->})
+            model.fieldsValueMode, {_ ->},
+            8)
     }
 }

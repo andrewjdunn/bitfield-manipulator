@@ -1,5 +1,6 @@
 package com.hciware.bitfields.detail
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
@@ -16,10 +17,15 @@ import com.hciware.bitfields.model.BitfieldSection
 import com.hciware.bitfields.ui.theme.BitfieldmanipulatorTheme
 
 @Composable
-fun FieldList(fields: List<BitfieldSection>, modifier: Modifier = Modifier) {
+fun FieldList(
+    fields: List<BitfieldSection>,
+    mode: BitFieldsViewModel.RadixMode,
+    commonScrollState: ScrollState,
+    modifier: Modifier = Modifier
+) {
 
-    Row(modifier.horizontalScroll(rememberScrollState())) {
-        fields.forEach { field -> Field(field = field) }
+    Row(modifier.horizontalScroll(commonScrollState)) {
+        fields.forEach { field -> Field(field = field, mode) }
     }
 }
 
@@ -28,18 +34,27 @@ fun FieldList(fields: List<BitfieldSection>, modifier: Modifier = Modifier) {
 fun PreviewFiledList() {
     val model = BitFieldsViewModel()
     BitfieldmanipulatorTheme {
-        FieldList(fields = model.bitfields[0].sections, Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background))
+        FieldList(
+            fields = model.bitfields[0].sections,
+            BitFieldsViewModel.RadixMode.Decimal,
+            rememberScrollState(),
+            Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.background)
+        )
     }
 }
 
 @Composable
-fun Field(field: BitfieldSection, modifier: Modifier = Modifier) {
+fun Field(
+    field: BitfieldSection,
+    mode: BitFieldsViewModel.RadixMode,
+    modifier: Modifier = Modifier
+) {
     Column(modifier) {
         Text(text = field.name)
         // TODO: Will need to pass the field for
-        FieldEditor(bitCount = field.end - field.start + 1)
+        FieldEditor(bitCount = field.end - field.start + 1, mode)
 
     }
 }
@@ -50,9 +65,12 @@ fun PreviewField() {
     val model = BitFieldsViewModel()
     val field = model.bitfields[0].sections[0]
     BitfieldmanipulatorTheme {
-        Field(field = field,
+        Field(
+            field = field,
+            BitFieldsViewModel.RadixMode.Decimal,
             Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background))
+                .background(MaterialTheme.colorScheme.background)
+        )
     }
 }

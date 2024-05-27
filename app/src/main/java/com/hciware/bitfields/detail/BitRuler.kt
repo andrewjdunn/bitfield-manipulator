@@ -1,8 +1,11 @@
 package com.hciware.bitfields.detail
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -13,8 +16,12 @@ import com.hciware.bitfields.ui.theme.BitfieldmanipulatorTheme
 
 // TODO: Don't forget that each bit has a colour that runs vertically from top to bottom
 @Composable
-fun BitRuler(modifier: Modifier = Modifier, bitCount: Int) {
-    Row(modifier.background(MaterialTheme.colorScheme.background)) {
+fun BitRuler(commonScrollState: ScrollState, bitCount: Int, modifier: Modifier = Modifier) {
+    Row(
+        modifier
+            .background(MaterialTheme.colorScheme.background)
+            .horizontalScroll(commonScrollState
+            )) {
         for(bit in bitCount.downTo(1)) {
             AssistChip(onClick = { /*TODO*/ }, label = { Text("$bit") })
         }
@@ -25,6 +32,9 @@ fun BitRuler(modifier: Modifier = Modifier, bitCount: Int) {
 @Composable
 fun PreviewButRuler() {
     BitfieldmanipulatorTheme {
-        BitRuler(bitCount = 8, modifier = Modifier.fillMaxWidth())
+        BitRuler(
+            rememberScrollState(),
+            bitCount = 8,
+            modifier = Modifier.fillMaxWidth())
     }
 }
