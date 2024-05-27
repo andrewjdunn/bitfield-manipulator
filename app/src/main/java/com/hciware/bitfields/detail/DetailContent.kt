@@ -10,7 +10,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.hciware.bitfields.model.BitFieldsViewModel
 import com.hciware.bitfields.model.BitfieldSection
 import com.hciware.bitfields.ui.theme.BitfieldmanipulatorTheme
-import kotlin.math.max
 
 // If the field names are large they will overlap.. single bit fields will be interesting..
 // Maybe have the value editors in a single row but the names alternate top or bottom?
@@ -21,13 +20,18 @@ import kotlin.math.max
 // Maybe have an edit bitfield button and then we drag the field and the labels become edited able in the same layout??
 
 @Composable
-fun DetailContent(fields: List<BitfieldSection>, modifier: Modifier = Modifier) {
+fun DetailContent(fields: List<BitfieldSection>,
+                  overallValueMode: BitFieldsViewModel.RadixMode,
+                  overallValueModeSelected: (BitFieldsViewModel.RadixMode) -> Unit,
+                  fieldValuesMode: BitFieldsViewModel.RadixMode,
+                  fieldValuesModeSelected: (BitFieldsViewModel.RadixMode) -> Unit,
+                  modifier: Modifier = Modifier) {
     Column (modifier) {
         // TODO: Model can supply this - the last end bit rounding to 8?
         val bitCount = 8
-        OverallValue(bitCount = bitCount)
+        OverallValue(bitCount = bitCount, overallValueMode, overallValueModeSelected)
         BitRuler(bitCount = bitCount)
-        FieldValues(fields)
+        FieldValues(fields, fieldValuesMode, fieldValuesModeSelected)
     }
 }
 
@@ -36,7 +40,12 @@ fun DetailContent(fields: List<BitfieldSection>, modifier: Modifier = Modifier) 
 fun PreviewDetailContent() {
     val model = BitFieldsViewModel()
     BitfieldmanipulatorTheme {
-        DetailContent(model.bitfields[0].sections, modifier = Modifier
+        DetailContent(model.bitfields[0].sections,
+            model.overallValueMode,
+            {_ ->},
+            model.fieldsValueMode,
+            {_ ->},
+            modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background))
     }

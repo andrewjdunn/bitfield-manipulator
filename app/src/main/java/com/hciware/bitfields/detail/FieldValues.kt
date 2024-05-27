@@ -11,9 +11,13 @@ import com.hciware.bitfields.ui.theme.BitfieldmanipulatorTheme
 
 // TODO: I called Fields Sections before.. but they are fields, make this consistent
 @Composable
-fun FieldValues(fields: List<BitfieldSection>, modifier: Modifier = Modifier) {
+fun FieldValues(fields: List<BitfieldSection>,
+                mode: BitFieldsViewModel.RadixMode,
+                modeSelected: (BitFieldsViewModel.RadixMode) -> Unit,
+                modifier: Modifier = Modifier) {
     Column(modifier) {
-        RadixSelector(title = "Field Values")
+
+        RadixSelector(title = "Field Values", mode, modeSelected)
         // And now a list of fields...
         // TODO: Nomenclature is getting messy - the landing page is a list of bitfields - but its not its a list of a list of bitfields
         FieldList(fields)
@@ -27,6 +31,9 @@ fun PreviewFieldValues() {
     BitfieldmanipulatorTheme {
         // TODO: Another creeping problem - are bits always described as 1 based or 0..
         val model = BitFieldsViewModel()
-        FieldValues(model.bitfields[0].sections, Modifier.fillMaxWidth())
+        FieldValues(model.bitfields[0].sections,
+            model.fieldsValueMode,
+            { _ -> },
+            Modifier.fillMaxWidth())
     }
 }

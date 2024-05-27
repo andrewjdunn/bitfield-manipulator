@@ -24,7 +24,13 @@ class BitfieldActivity : ComponentActivity() {
                 } else {
                     bitFieldsViewModel.selectedBitField?.description?.name?.let {
                         // tODO: !! not likey. also the ?. we can be sure if we get here that nothing is null?
-                        DetailScreen(name = it, fields = bitFieldsViewModel.selectedBitField?.sections!!)
+                        DetailScreen(name = it,
+                            fields = bitFieldsViewModel.selectedBitField?.sections!!,
+                            bitFieldsViewModel.overallValueMode,
+                            {mode -> bitFieldsViewModel.overallValueMode = mode},
+                            bitFieldsViewModel.fieldsValueMode,
+                            {mode -> bitFieldsViewModel.fieldsValueMode = mode}
+                            )
                     }
                 }
             }

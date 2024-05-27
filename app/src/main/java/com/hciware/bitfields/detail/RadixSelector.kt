@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.hciware.bitfields.model.BitFieldsViewModel
 import com.hciware.bitfields.ui.theme.BitfieldmanipulatorTheme
 
 //https://developer.android.com/reference/kotlin/androidx/compose/material3/package-summary
@@ -17,20 +18,26 @@ import com.hciware.bitfields.ui.theme.BitfieldmanipulatorTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RadixSelector(title: String, modifier: Modifier = Modifier) {
+fun RadixSelector(
+    title: String,
+    selectedMode: BitFieldsViewModel.RadixMode,
+    onSelect: (BitFieldsViewModel.RadixMode) -> Unit,
+    modifier: Modifier = Modifier
+) {
     Column(modifier) {
         Text(title)
-        val selectedIndex = 0
-        val options = listOf("Binary", "Decimal", "Hexadecimal")
+        // TODO: Add strings the to enum - can be in a string resource?
+        val options = BitFieldsViewModel.RadixMode.entries
         SingleChoiceSegmentedButtonRow {
-            options.forEachIndexed {
-                index, label -> SegmentedButton(selected = index == selectedIndex,
-                onClick = {},
-                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size)) {
-                    Text(label)
+            options.forEachIndexed { index, mode ->
+                SegmentedButton(
+                    selected = index == selectedMode.ordinal,
+                    onClick = {onSelect(mode)},
+                    shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size)
+                ) {
+                    Text(mode.toString())
+                }
             }
-            }
-
         }
     }
 }
@@ -39,6 +46,7 @@ fun RadixSelector(title: String, modifier: Modifier = Modifier) {
 @Composable
 fun PreviewRadixSelector() {
     BitfieldmanipulatorTheme {
-        RadixSelector(title = "Overall Number", modifier = Modifier.fillMaxWidth())
+        RadixSelector(title = "Overall Number",
+            BitFieldsViewModel.RadixMode.Decimal, { _ -> },  modifier = Modifier.fillMaxWidth())
     }
 }

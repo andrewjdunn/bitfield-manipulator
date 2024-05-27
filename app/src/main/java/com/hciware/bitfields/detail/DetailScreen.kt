@@ -16,11 +16,23 @@ import com.hciware.bitfields.ui.theme.BitfieldmanipulatorTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen(name: String, fields: List<BitfieldSection>, modifier: Modifier = Modifier) {
+fun DetailScreen(name: String,
+                 fields: List<BitfieldSection>,
+                 overallValueMode: BitFieldsViewModel.RadixMode,
+                 overallValueModeSelected: (BitFieldsViewModel.RadixMode) -> Unit,
+                 fieldValuesMode: BitFieldsViewModel.RadixMode,
+                 fieldValuesModeSelected: (BitFieldsViewModel.RadixMode) -> Unit,
+                 modifier: Modifier = Modifier) {
     Scaffold (
         topBar = { TopAppBar(title = { Text(name) }) },
         floatingActionButton = { FloatingActionButton(onClick = {},content = {Text("Add")}) },
-        content = {  padding -> DetailContent(fields, modifier.padding(padding))})
+        content = {  padding -> DetailContent(
+            fields,
+            overallValueMode,
+            overallValueModeSelected,
+            fieldValuesMode,
+            fieldValuesModeSelected,
+            modifier.padding(padding))})
 }
 
 @Preview(showBackground = true)
@@ -29,7 +41,10 @@ fun GreetingPreview() {
     val model = BitFieldsViewModel()
     val name = model.bitfields[0].description.name
     val fields = model.bitfields[0].sections
+    model.fieldsValueMode = BitFieldsViewModel.RadixMode.Decimal
     BitfieldmanipulatorTheme {
-        DetailScreen(name, fields)
+        DetailScreen(name, fields,
+            model.overallValueMode, {_ ->},
+            model.fieldsValueMode, {_ ->})
     }
 }

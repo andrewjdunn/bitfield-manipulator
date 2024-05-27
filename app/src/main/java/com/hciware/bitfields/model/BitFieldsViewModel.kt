@@ -9,8 +9,14 @@ import androidx.lifecycle.ViewModel
 class BitFieldsViewModel : ViewModel() {
     private val _bitfields = getSampleBitFields().toMutableList()
 
+    enum class RadixMode {
+        Binary, Hexadecimal, Decimal
+    }
+
     val bitfields: List<BitField> get() = _bitfields
-    var selectedBitField: BitField? by mutableStateOf<BitField?>(null)
+    var selectedBitField: BitField? by mutableStateOf(null)
+    var overallValueMode: RadixMode by mutableStateOf(RadixMode.Binary)
+    var fieldsValueMode: RadixMode by mutableStateOf(RadixMode.Binary)
 
     fun selectBitField(bitfield: BitField) {
         selectedBitField = bitfield
