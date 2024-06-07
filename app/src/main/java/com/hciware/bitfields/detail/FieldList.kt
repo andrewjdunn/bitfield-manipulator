@@ -23,9 +23,13 @@ fun FieldList(
     commonScrollState: ScrollState,
     modifier: Modifier = Modifier
 ) {
-
     Row(modifier.horizontalScroll(commonScrollState)) {
-        fields.forEach { field -> Field(field = field, mode) }
+        fields.forEach { field ->
+            Field(
+                field = field,
+                mode
+            )
+        }
     }
 }
 
@@ -53,9 +57,10 @@ fun Field(
 ) {
     Column(modifier) {
         Text(text = field.name)
-        // TODO: Will need to pass the field for
-        FieldEditor(bitCount = field.end - field.start + 1, mode)
-
+        FieldEditor(
+            field,
+            mode
+        )
     }
 }
 

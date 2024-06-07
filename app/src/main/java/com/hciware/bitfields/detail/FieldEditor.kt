@@ -3,6 +3,7 @@ package com.hciware.bitfields.detail
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -13,49 +14,77 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.hciware.bitfields.model.BitFieldsViewModel
+import com.hciware.bitfields.model.Field
 import com.hciware.bitfields.ui.theme.BitfieldmanipulatorTheme
 
 @Composable
-fun FieldEditor(bitCount: Int, mode: BitFieldsViewModel.RadixMode, modifier: Modifier = Modifier) {
-    // Return 1 of three editors - hex,dec,bin
-    // set to passed in value
-    // event sends new values
-    // made up of a component per bit/hextet/declet (made them up)
+fun FieldEditor(
+    field: Field,
+    mode: BitFieldsViewModel.RadixMode,
+    modifier: Modifier = Modifier
+) {
+    when (mode) {
+        BitFieldsViewModel.RadixMode.Binary -> BinaryNumberEditors(modifier, field)
+        BitFieldsViewModel.RadixMode.Hexadecimal -> HexNumberEditor(field)
+        BitFieldsViewModel.RadixMode.Decimal -> DecimalNumberEditor(field)
+    }
+}
 
-    when(mode) {
-        BitFieldsViewModel.RadixMode.Binary -> Row(modifier) {
-            for(bit in bitCount.downTo(1)) {
-                BinaryNumberEditor(value = "${bit % 2}")
-            }
+@Composable
+private fun BinaryNumberEditors(
+    modifier: Modifier,
+    field: Field
+) {
+    Row(modifier) {
+        for (bit in (field.endBit - 1).downTo(field.startBit - 1)) {
+            val mask = (1L shl bit)
+            val valueBit = if (((mask and field.getValue(mask)) == 0L)) 0 else 1
+            BinaryNumberEditor(
+                value = "$valueBit",
+                { field.up(mask) },
+                { field.down(mask) },
+                { v -> field.setValue(((if (v == "1") 1L else 0L)), mask) },
+                field.enabled
+            )
         }
-        BitFieldsViewModel.RadixMode.Hexadecimal -> HexNumberEditor(bitCount)
-        BitFieldsViewModel.RadixMode.Decimal -> DecimalNumberEditor(bitCount)
     }
 }
 
 @Preview
 @Composable
 fun PreviewFieldEditor() {
+    val model = BitFieldsViewModel()
+    val bitField = model.bitfields[1]
     BitfieldmanipulatorTheme {
-        FieldEditor(8, BitFieldsViewModel.RadixMode.Hexadecimal, Modifier.fillMaxWidth())
+        FieldEditor(
+            bitField,
+            mode = BitFieldsViewModel.RadixMode.Binary,
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }
 
-// TODO: Good practice to keep all the parts of this editor here?
-// I think so as they won't be used in other places alone...
 @Composable
-fun BinaryNumberEditor(value: String, modifier: Modifier = Modifier) {
-    Column(modifier) {
-        IconButton(onClick = { /*TODO*/ }) {
+fun BinaryNumberEditor(
+    value: String,
+    up: () -> Unit,
+    down: () -> Unit,
+    valueChanged: (String) -> Unit,
+    enabled: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .width(BitFieldsViewModel.widthPerBit + BitFieldsViewModel.bitPadding)
+            .padding(start = BitFieldsViewModel.bitPadding)
+    ) {
+        IconButton(onClick = up, enabled = enabled) {
             Icon(Icons.Filled.KeyboardArrowUp, contentDescription = "Increase Value")
         }
-        // TODO: 40.dp... need to get this base don content maybe.. and it needs to
-        // Match up with the bit ruler.. Which is does now by some freak chance :-)
-        // TODO: For binary editing.. makes little sense to allow keyboard entry.. clicking the text but should toggle the bit?
-        TextField(value = value, onValueChange = {}, modifier = Modifier.width(40.dp))
-        IconButton(onClick = { /*TODO*/ }) {
+        // TODO: For binary editing.. makes     little sense to allow keyboard entry.. clicking the text but should toggle the bit?
+        TextField(value = value, onValueChange = valueChanged, enabled = enabled)
+        IconButton(onClick = down, enabled = enabled) {
             Icon(Icons.Filled.KeyboardArrowDown, contentDescription = "Decrease Value")
         }
     }
@@ -65,45 +94,70 @@ fun BinaryNumberEditor(value: String, modifier: Modifier = Modifier) {
 @Composable
 fun PreviewNumberEditor() {
     BitfieldmanipulatorTheme {
-        BinaryNumberEditor("1")
+        BinaryNumberEditor(
+            "1", {}, {}, {},false)
     }
 }
 
+// TODO: For Hex fields that contain more than one nibble - split the nibbles and align with bits in bit ruler..
+@OptIn(ExperimentalStdlibApi::class)
 @Composable
-fun HexNumberEditor(bitCount: Int, modifier: Modifier = Modifier) {
-    Column(modifier) {
-        IconButton(onClick = { /*TODO*/ }) {
+fun HexNumberEditor(
+    field: Field,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier
+            .width((BitFieldsViewModel.widthPerBit + BitFieldsViewModel.bitPadding) * ((1 + field.endBit) - field.startBit))
+            .padding(start = BitFieldsViewModel.bitPadding)
+    ) {
+        IconButton(onClick = { field.up() }, enabled = field.enabled,) {
             Icon(Icons.Filled.KeyboardArrowUp, contentDescription = "Increase Value")
         }
-        // TODO: 40.dp... need to get this base don content maybe.. and it needs to
-        // Match up with the bit ruler.. Which is does now by some freak chance :-)
-        // TODO: For binary editing.. makes little sense to allow keyboard entry.. clicking the text but should toggle the bit?
-        TextField(value = "H$bitCount", onValueChange = {}, modifier = Modifier.width(40.dp * bitCount))
-        IconButton(onClick = { /*TODO*/ }) {
+
+        TextField(
+            value = field.getHexString(),
+            enabled = field.enabled,
+            onValueChange = { text -> field.setValue(text.hexToLong(), Long.MAX_VALUE) },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        IconButton(onClick = { field.down() }, enabled = field.enabled,) {
             Icon(Icons.Filled.KeyboardArrowDown, contentDescription = "Decrease Value")
         }
-    }    
+    }
 }
 
 @Preview
 @Composable
 fun PreviewHexNumberEditor() {
+    val field = BitFieldsViewModel().bitfields[0]
     BitfieldmanipulatorTheme {
-        HexNumberEditor(bitCount = 5)
+        HexNumberEditor(field)
     }
 }
 
 @Composable
-fun DecimalNumberEditor(bitCount: Int, modifier: Modifier = Modifier) {
-    Column(modifier) {
-        IconButton(onClick = { /*TODO*/ }) {
+fun DecimalNumberEditor(
+    field: Field,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .width((BitFieldsViewModel.widthPerBit + BitFieldsViewModel.bitPadding) * ((1 + field.endBit) - field.startBit))
+            .padding(start = BitFieldsViewModel.bitPadding)
+    ) {
+        IconButton(onClick = { field.up() }, enabled = field.enabled,) {
             Icon(Icons.Filled.KeyboardArrowUp, contentDescription = "Increase Value")
         }
-        // TODO: 40.dp... need to get this base don content maybe.. and it needs to
-        // Match up with the bit ruler.. Which is does now by some freak chance :-)
-        // TODO: For binary editing.. makes little sense to allow keyboard entry.. clicking the text but should toggle the bit?
-        TextField(value = "D${bitCount}", onValueChange = {}, modifier = Modifier.width(40.dp * bitCount))
-        IconButton(onClick = { /*TODO*/ }) {
+
+        TextField(
+            value = "${field.getValue()}",
+            enabled = field.enabled,
+            onValueChange = { v -> field.setValue(v.toLong()) },
+            modifier = Modifier.fillMaxWidth()
+        )
+        IconButton(onClick = { field.down() },enabled = field.enabled,) {
             Icon(Icons.Filled.KeyboardArrowDown, contentDescription = "Decrease Value")
         }
     }
@@ -112,7 +166,8 @@ fun DecimalNumberEditor(bitCount: Int, modifier: Modifier = Modifier) {
 @Preview
 @Composable
 fun PreviewDecimalNumberEditor() {
+    val field = BitFieldsViewModel().bitfields[1]
     BitfieldmanipulatorTheme {
-        DecimalNumberEditor(bitCount = 5)
+        DecimalNumberEditor(field)
     }
 }

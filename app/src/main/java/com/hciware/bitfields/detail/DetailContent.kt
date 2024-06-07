@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.hciware.bitfields.model.BitFieldsViewModel
 import com.hciware.bitfields.model.BitfieldSection
+import com.hciware.bitfields.model.Field
 import com.hciware.bitfields.ui.theme.BitfieldmanipulatorTheme
 
 // If the field names are large they will overlap.. single bit fields will be interesting..
@@ -27,14 +28,20 @@ fun DetailContent(fields: List<BitfieldSection>,
                   overallValueModeSelected: (BitFieldsViewModel.RadixMode) -> Unit,
                   fieldValuesMode: BitFieldsViewModel.RadixMode,
                   fieldValuesModeSelected: (BitFieldsViewModel.RadixMode) -> Unit,
-                  bitCount: Int,
+                  overallField: Field,
                   modifier: Modifier = Modifier) {
     Column (modifier.verticalScroll(rememberScrollState())) {
-        // TODO: Any need to add to the view model?
         val commonScrollState = rememberScrollState()
-        OverallValue(bitCount = bitCount, overallValueMode, overallValueModeSelected, commonScrollState)
-        BitRuler(commonScrollState, bitCount = bitCount)
-        FieldValues(fields, fieldValuesMode, fieldValuesModeSelected, commonScrollState)
+        OverallValue(overallField,
+            overallValueMode,
+            overallValueModeSelected,
+            commonScrollState)
+        BitRuler(commonScrollState, bitCount = overallField.endBit)
+        FieldValues(
+            fields,
+            fieldValuesMode,
+            fieldValuesModeSelected,
+            commonScrollState)
     }
 }
 
@@ -48,7 +55,7 @@ fun PreviewDetailContent() {
             {_ ->},
             model.fieldsValueMode,
             {_ ->},
-            8,
+            model.selectedBitField!!,
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background))

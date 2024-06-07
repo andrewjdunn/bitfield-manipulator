@@ -11,30 +11,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.hciware.bitfields.model.BitFieldsViewModel
 import com.hciware.bitfields.model.BitfieldSection
+import com.hciware.bitfields.model.Field
 import com.hciware.bitfields.ui.theme.BitfieldmanipulatorTheme
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailScreen(name: String,
-                 fields: List<BitfieldSection>,
-                 overallValueMode: BitFieldsViewModel.RadixMode,
-                 overallValueModeSelected: (BitFieldsViewModel.RadixMode) -> Unit,
-                 fieldValuesMode: BitFieldsViewModel.RadixMode,
-                 fieldValuesModeSelected: (BitFieldsViewModel.RadixMode) -> Unit,
-                 bitCount: Int,
-                 modifier: Modifier = Modifier) {
-    Scaffold (
+fun DetailScreen(
+    name: String,
+    fields: List<BitfieldSection>,
+    overallValueMode: BitFieldsViewModel.RadixMode,
+    overallValueModeSelected: (BitFieldsViewModel.RadixMode) -> Unit,
+    fieldValuesMode: BitFieldsViewModel.RadixMode,
+    fieldValuesModeSelected: (BitFieldsViewModel.RadixMode) -> Unit,
+    overallField: Field,
+    modifier: Modifier = Modifier
+) {
+    Scaffold(
         topBar = { TopAppBar(title = { Text(name) }) },
-        floatingActionButton = { FloatingActionButton(onClick = {},content = {Text("Add")}) },
-        content = {  padding -> DetailContent(
-            fields,
-            overallValueMode,
-            overallValueModeSelected,
-            fieldValuesMode,
-            fieldValuesModeSelected,
-            bitCount,
-            modifier.padding(padding))})
+        floatingActionButton = { FloatingActionButton(onClick = {}, content = { Text("Add") }) },
+        content = { padding ->
+            DetailContent(
+                fields,
+                overallValueMode,
+                overallValueModeSelected,
+                fieldValuesMode,
+                fieldValuesModeSelected,
+                overallField,
+                modifier.padding(padding)
+            )
+        })
 }
 
 @Preview(showBackground = true)
@@ -45,9 +50,11 @@ fun GreetingPreview() {
     val fields = model.bitfields[0].sections
     model.fieldsValueMode = BitFieldsViewModel.RadixMode.Decimal
     BitfieldmanipulatorTheme {
-        DetailScreen(name, fields,
-            model.overallValueMode, {_ ->},
-            model.fieldsValueMode, {_ ->},
-            8)
+        DetailScreen(
+            name, fields,
+            model.overallValueMode, { _ -> },
+            model.fieldsValueMode, { _ -> },
+            model.selectedBitField!!
+        )
     }
 }

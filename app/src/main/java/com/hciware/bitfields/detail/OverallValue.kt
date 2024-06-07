@@ -10,20 +10,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.hciware.bitfields.model.BitFieldsViewModel
+import com.hciware.bitfields.model.Field
 import com.hciware.bitfields.ui.theme.BitfieldmanipulatorTheme
 
 @Composable
-fun OverallValue(bitCount: Int,
-                 mode: BitFieldsViewModel.RadixMode,
-                 modeSelected: (BitFieldsViewModel.RadixMode) -> Unit,
-                 commonScrollState: ScrollState,
-                 modifier: Modifier = Modifier) {
+fun OverallValue(
+    overallField: Field,
+    mode: BitFieldsViewModel.RadixMode,
+    modeSelected: (BitFieldsViewModel.RadixMode) -> Unit,
+    commonScrollState: ScrollState,
+    modifier: Modifier = Modifier
+) {
     Column(modifier) {
         RadixSelector(title = "Overall Value", mode, modeSelected)
-        Surface(Modifier.horizontalScroll(commonScrollState)) {
-            FieldEditor(bitCount, mode)
-        }
-
+        FieldEditor(overallField, mode, modifier = Modifier.horizontalScroll(commonScrollState))
     }
 }
 
@@ -32,10 +32,12 @@ fun OverallValue(bitCount: Int,
 fun PreviewOverallValue() {
     val model = BitFieldsViewModel()
     BitfieldmanipulatorTheme {
-        OverallValue(8,
+        OverallValue(
+            model.bitfields[1],
             model.overallValueMode,
-            {_ -> },
+            { _ -> },
             rememberScrollState(),
-            Modifier.fillMaxSize())
+            Modifier.fillMaxSize()
+        )
     }
 }
