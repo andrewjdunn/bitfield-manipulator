@@ -26,10 +26,10 @@ fun BitRuler(commonScrollState: ScrollState, bitCount: Int, modifier: Modifier =
             .background(MaterialTheme.colorScheme.background)
             .horizontalScroll(commonScrollState
             )) {
-        for(bit in bitCount.downTo(1)) {
+        for(bit in bitCount.downTo(0)) {
             AssistChip(
                 onClick = { /*TODO*/ },
-                label = { Text("$bit",
+                label = { /*TODO: Add to view model*/Text("${bit + 1}",
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()

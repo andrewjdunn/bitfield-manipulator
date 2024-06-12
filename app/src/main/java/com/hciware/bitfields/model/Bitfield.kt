@@ -3,13 +3,6 @@ package com.hciware.bitfields.model
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableLongStateOf
 
-// ... Add unit test and fix model..
-// .. Test and fix compose event stuff..
-
-// Commit .. after this will need to improve the visuals - add boxes around stuff and colour
-// based on bits etc,, and then finally - how do we edit a bit field (add/update/delete sections)
-
-
 // TODO: MAX_VALUE is not all FFFFs need a ULONG For That.
 interface Field {
     fun setValue(newValue: Long, mask:Long = Long.MAX_VALUE)
@@ -20,6 +13,14 @@ interface Field {
     val startBit: Int
     val endBit: Int
     val enabled: Boolean
+}
+
+private fun getFirstBitOf(mask: Long): Int {
+    var firstBit = 0
+    while( ((1L shl firstBit) and mask) == 0L) {
+        firstBit += 1
+    }
+    return firstBit
 }
 
 @OptIn(ExperimentalStdlibApi::class)
@@ -38,18 +39,57 @@ private fun getHexStringForField(field: Field, mask: Long) : String {
     return hexString
 }
 
+private fun up(mask: Long, field: Field) {
+    val currentMaskedValue =  field.getValue(mask)
+    val firstBit = getFirstBitOf(mask)
+    val currentMaskedShiftedValue = currentMaskedValue shr firstBit
+    val newMaskedShiftedValue = currentMaskedShiftedValue + 1
+
+    val maxMaskedValue = mask shr firstBit
+
+    if(newMaskedShiftedValue in (currentMaskedShiftedValue + 1)..maxMaskedValue) {
+        field.setValue(newMaskedShiftedValue shl firstBit, mask)
+    }
+}
+
+private fun down(mask: Long, field: Field) {
+    val currentMaskedValue = field.getValue(mask)
+    val firstBit = getFirstBitOf(mask)
+    val currentMaskedShiftedValue = currentMaskedValue shr firstBit
+    val newMaskedShiftedValue = currentMaskedShiftedValue - 1
+
+    if(newMaskedShiftedValue in 0..<currentMaskedShiftedValue) {
+        field.setValue(newMaskedShiftedValue shl firstBit, mask)
+    }
+}
 
 data class BitfieldDescription (val id: Long, val name: String)
 
 data class BitfieldSection (val bitField: BitField, val name: String, override val startBit: Int, override val endBit: Int, var value: MutableState<Long> = mutableLongStateOf(0L)) : Field {
     override fun setValue(newValue: Long, mask: Long) {
-        // TODO: Not using mask... needed?
-        val bitmask = (( 2L shl  (endBit-startBit) ) - 1) shl startBit
-        value.value = newValue shl startBit
-        // TODO: value.value... names a bit odd!
-        this.bitField.value.value and bitmask.inv()
-        this.bitField.value.value = this.bitField.value.value or (value.value and bitmask)
+
+        val unShiftedBitMask = (( 2L shl  (endBit-startBit) ) - 1)
+        val bitmask = unShiftedBitMask shl startBit
+        val maskedMask = unShiftedBitMask and mask
+        val shiftedValue = newValue shl getFirstBitOf(bitmask)
+
+        val valueWithoutMaskedBits = (value.value and maskedMask.inv() shl getFirstBitOf(bitmask))
+        val valueWithNewValueBits = (valueWithoutMaskedBits or shiftedValue) and bitmask
+
+        value.value = valueWithNewValueBits shr startBit
+        this.bitField.recalculateValue()
         println("Section $name Set value $newValue with mask $mask Section Value ${value.value} Bitfield Value ${bitField.value.value}")
+    }
+
+    internal fun recalculateValue() {
+        var mask = 0L
+        for(i in 0..63) {
+            if(i in startBit..endBit) {
+                mask = mask or (1L shl i)
+            }
+        }
+        val maskedValue = bitField.value.value and mask
+        value.value = maskedValue shr startBit
     }
 
     override fun getValue(mask: Long): Long {
@@ -59,38 +99,14 @@ data class BitfieldSection (val bitField: BitField, val name: String, override v
         return getHexStringForField(this, mask)
     }
 
-    private fun getFirstBitOf(mask: Long): Int {
-        var firstBit = 0
-        while( ((1L shl firstBit) and mask) == 0L) {
-            firstBit += 1
-        }
-        return firstBit
-    }
-
     override fun up(mask: Long) {
-        println("Increase field $name mask $mask field value is $startBit - $endBit")
-        val currentMaskedValue = value.value and mask
-        // We are incrementing the masked part of the field not the entire field..
-        // But is the mask relative to the field??
-        val firstBit = getFirstBitOf(mask)
-        val currentMaskedShiftedValue = currentMaskedValue shr firstBit
-        val newMaskedShiftedValue = currentMaskedShiftedValue + 1
-        if(newMaskedShiftedValue >  currentMaskedShiftedValue) {
-            setValue(newMaskedShiftedValue shl firstBit, mask)
-        }
+        println("Increase field $name mask $mask field value is ${value.value} start bit $startBit - end bit $endBit")
+        up(mask, this);
     }
 
     override fun down(mask: Long) {
         println("Decrease field $name mask $mask field value is $startBit - $endBit")
-        val currentMaskedValue = value.value and mask
-        // We are incrementing the masked part of the field not the entire field..
-        // But is the mask relative to the field??
-        val firstBit = getFirstBitOf(mask)
-        val currentMaskedShiftedValue = currentMaskedValue shr firstBit
-        val newMaskedShiftedValue = currentMaskedShiftedValue - 1
-        if(newMaskedShiftedValue <  currentMaskedShiftedValue) {
-            setValue(newMaskedShiftedValue shl firstBit, mask)
-        }
+        down(mask, this)
     }
 
     override val enabled: Boolean
@@ -118,23 +134,27 @@ data class BitField(val description: BitfieldDescription, val value: MutableStat
         return this
     }
 
-    // TODO: Not sure how to use the masks here - when setting we only set bts in the mask, and getting returns only bits in the mask
-    // But do we need to shift the value ready for display??... not sure  this is for when we want to get/set from a hex octet or binary bit..
-    override fun setValue(newValue: Long, mask: Long) {
+    internal fun recalculateValue() {
+        var newValue = 0L
+        for(s in sections) {
+            newValue = newValue or (s.value.value shl s.startBit)
+        }
         value.value = newValue
+    }
+
+    override fun setValue(newValue: Long, mask: Long) {
+
+        val valueWithoutMaskedBits = value.value and mask.inv()
+        val valueWithNewValueBits = (valueWithoutMaskedBits or newValue)// and mask
+
+        value.value = valueWithNewValueBits
         for (s in sections) {
-            // Shift the top bits off
-            val ourValue: Long = this@BitField.value.value shl (63 - endBit)
-
-            // And shift to zero
-            ourValue ushr (64 - ((endBit - startBit) + 1))
-
-            s.setValue(ourValue, Long.MAX_VALUE)
+            s.recalculateValue()
         }
     }
 
     override fun getValue(mask: Long): Long {
-        return value.value
+        return value.value and mask
     }
 
     override fun getHexString(mask: Long): String {
@@ -142,17 +162,17 @@ data class BitField(val description: BitfieldDescription, val value: MutableStat
     }
 
     override fun up(mask: Long) {
-        setValue(value.value + 1, mask)
+        up(mask, this)
     }
 
     override fun down(mask: Long) {
-        setValue(value.value - 1, mask)
+        down(mask, this)
     }
 
     override val startBit: Int
-        get() = 1
+        get() = 0
     override val endBit: Int
-        get() = sections.maxOf { section -> section.endBit } + 1
+        get() = sections.maxOf { section -> section.endBit }
     override val enabled: Boolean
         get() = true
 }

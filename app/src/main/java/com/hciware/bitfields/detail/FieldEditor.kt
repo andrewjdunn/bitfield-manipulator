@@ -37,9 +37,9 @@ private fun BinaryNumberEditors(
     field: Field
 ) {
     Row(modifier) {
-        for (bit in (field.endBit - 1).downTo(field.startBit - 1)) {
-            val mask = (1L shl bit)
-            val valueBit = if (((mask and field.getValue(mask)) == 0L)) 0 else 1
+        for (bit in (field.endBit).downTo(field.startBit)) {
+            val mask = (1L shl bit - field.startBit)
+            val valueBit = if ((field.getValue(mask) == 0L)) 0 else 1
             BinaryNumberEditor(
                 value = "$valueBit",
                 { field.up(mask) },

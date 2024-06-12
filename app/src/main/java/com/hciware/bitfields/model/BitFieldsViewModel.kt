@@ -6,14 +6,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 
-
 class BitFieldsViewModel : ViewModel() {
     private val _bitfields = getSampleBitFields().toMutableList()
 
     enum class RadixMode {
         Binary, Hexadecimal, Decimal
     }
-
 
     companion object {
         // TODO: Need a common place this so that all the numbers can line up. here is good for now
