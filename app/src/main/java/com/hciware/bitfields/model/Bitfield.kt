@@ -101,7 +101,7 @@ data class BitfieldSection (val bitField: BitField, val name: String, override v
 
     override fun up(mask: Long) {
         println("Increase field $name mask $mask field value is ${value.value} start bit $startBit - end bit $endBit")
-        up(mask, this);
+        up(mask, this)
     }
 
     override fun down(mask: Long) {
