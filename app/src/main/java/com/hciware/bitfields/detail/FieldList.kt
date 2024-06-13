@@ -3,15 +3,22 @@ package com.hciware.bitfields.detail
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.hciware.bitfields.model.BitFieldsViewModel
 import com.hciware.bitfields.model.BitfieldSection
 import com.hciware.bitfields.ui.theme.BitfieldmanipulatorTheme
@@ -23,12 +30,23 @@ fun FieldList(
     commonScrollState: ScrollState,
     modifier: Modifier = Modifier
 ) {
-    Row(modifier.horizontalScroll(commonScrollState)) {
+    Row(
+        modifier
+            .horizontalScroll(commonScrollState)
+            .height(IntrinsicSize.Min),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
         fields.forEach { field ->
             Field(
                 field = field,
                 mode
             )
+            VerticalDivider(
+                color = MaterialTheme.colorScheme.outlineVariant,
+                modifier = Modifier
+                    .offset(x = 2.5.dp)
+            )
+
         }
     }
 }
@@ -56,7 +74,11 @@ fun Field(
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
-        Text(text = field.name)
+        Text(
+            text = field.name,
+            style = MaterialTheme.typography.labelSmall,
+            modifier = modifier.padding(start = 10.dp)
+        )
         FieldEditor(
             field,
             mode
