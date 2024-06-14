@@ -3,8 +3,8 @@
  */
 package com.hciware.bitfields;
 
-import java.util.ArrayList;
-import java.util.List;
+import static androidx.compose.runtime.SnapshotStateKt.mutableStateOf;
+import static androidx.compose.runtime.SnapshotStateKt.structuralEqualityPolicy;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -12,7 +12,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.hciware.bitfields.BitField.Section;
+import com.hciware.bitfields.model.BitField;
+import com.hciware.bitfields.model.BitfieldDescription;
+import com.hciware.bitfields.model.BitfieldSection;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -38,7 +43,7 @@ public class BitFieldDBHelper extends SQLiteOpenHelper {
 
 	private final static String CreateBitFieldSections = "create table "
 			+ Table_BitFieldSections + " (" + Field_Id + " int," + Section_Name
-			+ " text," + Section_StartBit + " int," + Section_EndBit + " int) ";
+			+ " text," + Section_StartBit + " int," + Section_EndBit + "int) ";
 
 	public BitFieldDBHelper(Context context) {
 		super(context, DatabaseName, null, DatabaseVersion);
@@ -68,10 +73,11 @@ public class BitFieldDBHelper extends SQLiteOpenHelper {
 	public void setBitField(final BitField updatedBitField) {
 		SQLiteDatabase db = getWritableDatabase();
 		ContentValues values = new ContentValues();
-		values.put(Field_Name, updatedBitField.getName());
-		values.put(Field_Description, updatedBitField.getName());
+		values.put(Field_Name, updatedBitField.getDescription().getName());
+		// TODO: The same.. whats the point?
+		values.put(Field_Description, updatedBitField.getDescription().getName());
 		db.update(Table_BitFields, values, "rowid = ?",
-				new String[] { String.valueOf(updatedBitField.getId()) });
+				new String[] { String.valueOf(updatedBitField.getDescription().getId()) });
 		db.close();
 	}
 
@@ -101,10 +107,11 @@ public class BitFieldDBHelper extends SQLiteOpenHelper {
 				null);
 		cursor.moveToFirst();
 		while (!cursor.isAfterLast()) {
-			fieldList.add(new BitField(cursor.getString(cursor
-					.getColumnIndex(Field_Name)), cursor.getString(cursor
-					.getColumnIndex(Field_Description)), cursor.getLong(cursor
-					.getColumnIndex("rowid"))));
+			int rowIdColId = cursor.getColumnIndex("rowid");
+			int nameColId = cursor.getColumnIndex(Field_Name);
+			long rowId = cursor.getLong(rowIdColId);
+			String name = cursor.getString(nameColId);
+			fieldList.add(new BitField(new BitfieldDescription(rowId, name), mutableStateOf(0L, structuralEqualityPolicy())));
 			cursor.moveToNext();
 		}
 		// TODO: Should the sections in the fields be populated here?
@@ -139,49 +146,53 @@ public class BitFieldDBHelper extends SQLiteOpenHelper {
 		return deleted;
 	}
 
-	private List<BitField.Section> getBitfieldSections(final BitField field) {
+	private List<BitfieldSection> getBitfieldSections(final BitField field) {
 
 		SQLiteDatabase db = getReadableDatabase();
 		Cursor cursor = db
 				.query(Table_BitFieldSections, new String[] { "rowid",
 						Field_Id, Section_Name, Section_StartBit,
 						Section_EndBit }, Field_Id + " = ?",
-						new String[] { Long.toString(field.getId()) }, null,
+						new String[] { Long.toString(field.getDescription().getId()) }, null,
 						null, null);
 		cursor.moveToFirst();
 		while (!cursor.isAfterLast()) {
-			field.createSection(cursor.getLong(cursor.getColumnIndex("rowid")),
-					cursor.getString(cursor.getColumnIndex(Section_Name)),
-					cursor.getInt(cursor.getColumnIndex(Section_StartBit)),
-					cursor.getInt(cursor.getColumnIndex(Section_EndBit)));
+			int nameColId = cursor.getColumnIndex(Section_Name);
+			int startBitColId = cursor.getColumnIndex(Section_StartBit);
+			int endBitColId = cursor.getColumnIndex(Section_EndBit);
+			field.addBitfieldSection(
+					cursor.getString(nameColId),
+					cursor.getInt(startBitColId),
+					cursor.getInt(endBitColId));
 			cursor.moveToNext();
+
 		}
 		cursor.close();
 		db.close();
 		return field.getSections();
 	}
 
-	public long addFieldSection(final long id, final Section section) {
+	public long addFieldSection(final long id, final BitfieldSection section) {
 		long newId;
 		SQLiteDatabase db = getWritableDatabase();
 		ContentValues values = new ContentValues();
 		values.put(Field_Id, id);
 		values.put(Section_Name, section.getName());
-		values.put(Section_StartBit, section.getStart());
-		values.put(Section_EndBit, section.getEnd());
+		values.put(Section_StartBit, section.getStartBit());
+		values.put(Section_EndBit, section.getEndBit());
 		newId = db.insert(Table_BitFieldSections, null, values);
 		db.close();
 		return newId;
 	}
 
-	public void updateFieldSection(long id, Section section) {
+	public void updateFieldSection(long id, BitfieldSection section) {
 		SQLiteDatabase db = getWritableDatabase();
 		ContentValues values = new ContentValues();
 		values.put(Section_Name, section.getName());
-		values.put(Section_StartBit, section.getStart());
-		values.put(Section_EndBit, section.getEnd());
+		values.put(Section_StartBit, section.getStartBit());
+		values.put(Section_EndBit, section.getEndBit());
 		db.update(Table_BitFieldSections, values, "rowid=? and " + Field_Id
-				+ "=?", new String[] { Long.toString(section.getSectionId()),
+				+ "=?", new String[] { Long.toString(section.getStartBit()), // TODO: Start bit?? better to use the ordinal?
 				Long.toString(id) });
 
 		db.close();
