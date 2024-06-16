@@ -79,6 +79,11 @@ fun Field(
             style = MaterialTheme.typography.labelSmall,
             modifier = modifier.padding(start = 10.dp)
         )
+        Text(text = field.maxValueStr,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = modifier.padding(start = 10.dp)
+        )
         FieldEditor(
             field,
             mode

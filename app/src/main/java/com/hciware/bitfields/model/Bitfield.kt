@@ -99,6 +99,10 @@ data class BitfieldSection (val bitField: BitField, val name: String, override v
         return getHexStringForField(this, mask)
     }
 
+    val maxValueStr : String
+        get() = if (enabled)  ((1 shl (endBit - startBit) + 1) -1).toString() else ""
+
+
     override fun up(mask: Long) {
         println("Increase field $name mask $mask field value is ${value.value} start bit $startBit - end bit $endBit")
         up(mask, this)
