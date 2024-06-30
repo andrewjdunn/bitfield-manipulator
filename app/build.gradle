@@ -43,6 +43,12 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+
+    testOptions {
+        unitTests.all {
+            it.useJUnitPlatform()
+        }
+    }
 }
 
 dependencies {
@@ -68,6 +74,14 @@ dependencies {
     // Optional - Integration with activities
     implementation 'androidx.activity:activity-compose:1.9.0'
 
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
+
+    // https://mvnrepository.com/artifact/io.kotest/kotest-runner-junit5-jvm
+    testImplementation group: 'io.kotest', name: 'kotest-runner-junit5-jvm', version: '5.9.1'
+    testImplementation group: 'io.kotest', name: 'kotest-runner-junit5', version: '5.9.1'
+
+    // https://mvnrepository.com/artifact/io.kotest/kotest-framework-datatest-jvm
+    testImplementation group: 'io.kotest', name: 'kotest-framework-datatest-jvm', version: '5.9.1'
+
+
 }

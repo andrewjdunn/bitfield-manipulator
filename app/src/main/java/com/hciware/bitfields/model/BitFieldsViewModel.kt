@@ -40,7 +40,6 @@ class BitFieldsViewModel : ViewModel() {
         BitField(
             BitfieldDescription(2, "Result"))
             .addBitfieldSection( "Stored", 12, 12)
-            // TODO: Success is too big for a 1 bit field so it makes for a gap after Success..  try alternating the labels?
             .addBitfieldSection( "Success", 11, 11)
             .addBitfieldSection( "Label 1", 5, 9)
             .addBitfieldSection( "Box Color", 0,4))

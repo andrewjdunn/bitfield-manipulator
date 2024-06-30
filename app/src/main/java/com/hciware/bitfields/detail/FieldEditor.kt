@@ -38,13 +38,12 @@ private fun BinaryNumberEditors(
 ) {
     Row(modifier) {
         for (bit in (field.endBit).downTo(field.startBit)) {
-            val mask = (1L shl bit - field.startBit)
-            val valueBit = if ((field.getValue(mask) == 0L)) 0 else 1
+            val mask = (1UL shl bit - field.startBit)
             BinaryNumberEditor(
-                value = "$valueBit",
+                value = field.getValue(2, mask),
                 { field.up(mask) },
                 { field.down(mask) },
-                { v -> field.setValue(((if (v == "1") 1L else 0L)), mask) },
+                { field.setValue(it, 2, mask)},
                 field.enabled
             )
         }
@@ -116,9 +115,9 @@ fun HexNumberEditor(
         }
 
         TextField(
-            value = field.getHexString(),
+            value = field.getValue(16),
             enabled = field.enabled,
-            onValueChange = { text -> field.setValue(text.hexToLong(), Long.MAX_VALUE) },
+            onValueChange = { text -> field.setValue(text, 16) },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -152,9 +151,9 @@ fun DecimalNumberEditor(
         }
 
         TextField(
-            value = "${field.getValue()}",
+            value = field.getValue(10),
             enabled = field.enabled,
-            onValueChange = { v -> field.setValue(v.toLong()) },
+            onValueChange = { v -> field.setValue(v, 10) },
             modifier = Modifier.fillMaxWidth()
         )
         IconButton(onClick = { field.down() },enabled = field.enabled,) {

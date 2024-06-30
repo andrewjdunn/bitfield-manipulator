@@ -111,7 +111,7 @@ public class BitFieldDBHelper extends SQLiteOpenHelper {
 			int nameColId = cursor.getColumnIndex(Field_Name);
 			long rowId = cursor.getLong(rowIdColId);
 			String name = cursor.getString(nameColId);
-			fieldList.add(new BitField(new BitfieldDescription(rowId, name), mutableStateOf(0L, structuralEqualityPolicy())));
+			fieldList.add(new BitField(new BitfieldDescription(rowId, name), mutableStateOf("0", structuralEqualityPolicy())));
 			cursor.moveToNext();
 		}
 		// TODO: Should the sections in the fields be populated here?
