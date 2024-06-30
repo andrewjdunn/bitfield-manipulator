@@ -1,5 +1,7 @@
 package com.hciware.bitfields.detail
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +14,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.hciware.bitfields.model.BitFieldsViewModel
@@ -43,7 +47,7 @@ private fun BinaryNumberEditors(
                 value = field.getValue(2, mask),
                 { field.up(mask) },
                 { field.down(mask) },
-                { field.setValue(it, 2, mask)},
+                { field.setValue(if (field.getValue(2, mask) == "0") "1" else "0", 2, mask)},
                 field.enabled
             )
         }
@@ -69,7 +73,7 @@ fun BinaryNumberEditor(
     value: String,
     up: () -> Unit,
     down: () -> Unit,
-    valueChanged: (String) -> Unit,
+    toggle: () -> Unit,
     enabled: Boolean,
     modifier: Modifier = Modifier
 ) {
@@ -81,8 +85,18 @@ fun BinaryNumberEditor(
         IconButton(onClick = up, enabled = enabled) {
             Icon(Icons.Filled.KeyboardArrowUp, contentDescription = "Increase Value")
         }
-        // TODO: For binary editing.. makes     little sense to allow keyboard entry.. clicking the text but should toggle the bit?
-        TextField(value = value, onValueChange = valueChanged, enabled = enabled)
+
+        val source = remember {
+            MutableInteractionSource()
+        }.also { mutableInteractionSource -> LaunchedEffect(mutableInteractionSource) {
+            mutableInteractionSource.interactions.collect {
+                if (enabled && it is PressInteraction.Press ) {
+                    toggle()
+                }
+            }
+        } }
+
+        TextField(value = value, readOnly = true, onValueChange = { _ -> }, interactionSource = source)
         IconButton(onClick = down, enabled = enabled) {
             Icon(Icons.Filled.KeyboardArrowDown, contentDescription = "Decrease Value")
         }
@@ -94,7 +108,7 @@ fun BinaryNumberEditor(
 fun PreviewNumberEditor() {
     BitfieldmanipulatorTheme {
         BinaryNumberEditor(
-            "1", {}, {}, {},false)
+            "1", {}, {}, {}, false)
     }
 }
 
