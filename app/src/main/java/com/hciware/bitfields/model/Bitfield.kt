@@ -6,6 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 interface Field {
     fun setValue(newValue: String, radix: Int = 10, mask:ULong = ULong.MAX_VALUE)
     fun getValue(radix: Int, mask: ULong = ULong.MAX_VALUE): String
+    fun getInvalidValueText(radix: Int) : String
+    fun getMaxValueStr(radix: Int) : String
     fun up(mask: ULong = ULong.MAX_VALUE)
     fun down(mask:ULong = ULong.MAX_VALUE)
     val startBit: Int
@@ -54,6 +56,10 @@ private fun getHexStringForField(field: Field, mask: ULong) : String {
         hexString = "0".repeat(nibbles - hexString.length) + hexString
     }
     return hexString
+}
+
+private fun getMaxValueStr(radix: Int, field: Field) : String {
+    return if (field.enabled)  ((1 shl (field.endBit - field.startBit) + 1) -1).toString(radix) else ""
 }
 
 private fun up(mask: ULong, field: Field) {
@@ -123,8 +129,9 @@ data class BitfieldSection (val bitField: BitField, val name: String, override v
         }
     }
 
-    val maxValueStr : String
-        get() = if (enabled)  ((1 shl (endBit - startBit) + 1) -1).toString() else ""
+    override fun getMaxValueStr(radix: Int) : String {
+        return getMaxValueStr(radix, this)
+    }
 
 
     override fun up(mask: ULong) {
@@ -190,6 +197,9 @@ data class BitField(val description: BitfieldDescription, val value: MutableStat
         } else {
             value.value
         }
+    }
+    override fun getMaxValueStr(radix: Int): String {
+        return getMaxValueStr(radix, this)
     }
 
     override fun up(mask: ULong) {
