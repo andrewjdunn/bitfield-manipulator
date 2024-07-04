@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -132,6 +133,9 @@ fun HexNumberEditor(
             value = field.getValue(16),
             enabled = field.enabled,
             onValueChange = { text -> field.setValue(text, 16) },
+            isError = !field.isValueValid,
+            supportingText = {Text(text = field.getInvalidValueText(16),
+                maxLines = 1, modifier = Modifier.fillMaxWidth())},
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -168,6 +172,9 @@ fun DecimalNumberEditor(
             value = field.getValue(10),
             enabled = field.enabled,
             onValueChange = { v -> field.setValue(v, 10) },
+            isError = !field.isValueValid,
+            supportingText = {Text(text = field.getInvalidValueText(10),
+                maxLines = 1, modifier = Modifier.fillMaxWidth())},
             modifier = Modifier.fillMaxWidth()
         )
         IconButton(onClick = { field.down() },enabled = field.enabled,) {

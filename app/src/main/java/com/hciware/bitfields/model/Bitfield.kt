@@ -13,6 +13,7 @@ interface Field {
     val startBit: Int
     val endBit: Int
     val enabled: Boolean
+    val isValueValid: Boolean
 }
 
 private fun getFirstBitOf(mask: ULong): Int {
@@ -129,6 +130,10 @@ data class BitfieldSection (val bitField: BitField, val name: String, override v
         }
     }
 
+    override fun getInvalidValueText(radix: Int): String {
+        return if(isValueValid || !enabled) "" else "> ${getMaxValueStr(radix)}"
+    }
+
     override fun getMaxValueStr(radix: Int) : String {
         return getMaxValueStr(radix, this)
     }
@@ -146,6 +151,9 @@ data class BitfieldSection (val bitField: BitField, val name: String, override v
 
     override val enabled: Boolean
         get() = name.isNotEmpty()
+
+    override val isValueValid: Boolean
+        get() = enabled && getLongValueOrZero(this, ULong.MAX_VALUE) <= getMaxValueStr(10).toULong()
 }
 
 data class BitField(val description: BitfieldDescription, val value: MutableState<String> = mutableStateOf("0")) : Field {
@@ -198,6 +206,11 @@ data class BitField(val description: BitfieldDescription, val value: MutableStat
             value.value
         }
     }
+
+    override fun getInvalidValueText(radix: Int): String {
+        return if(isValueValid) "" else "> ${getMaxValueStr(10, this)}"
+    }
+
     override fun getMaxValueStr(radix: Int): String {
         return getMaxValueStr(radix, this)
     }
@@ -217,4 +230,6 @@ data class BitField(val description: BitfieldDescription, val value: MutableStat
         get() = sections.maxOf { section -> section.endBit }
     override val enabled: Boolean
         get() = true
+    override val isValueValid: Boolean
+        get() = getLongValueOrZero(this, ULong.MAX_VALUE) <= ((1UL shl (endBit - startBit) + 1) -1UL)
 }

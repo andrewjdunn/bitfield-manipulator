@@ -79,7 +79,11 @@ fun Field(
             style = MaterialTheme.typography.labelSmall,
             modifier = modifier.padding(start = 10.dp)
         )
-        Text(text = field.maxValueStr,
+        Text(text = field.getMaxValueStr(when(mode) {
+            BitFieldsViewModel.RadixMode.Binary -> 2
+            BitFieldsViewModel.RadixMode.Hexadecimal -> 16
+            BitFieldsViewModel.RadixMode.Decimal -> 10
+        }),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.primary,
             modifier = modifier.padding(start = 10.dp)
