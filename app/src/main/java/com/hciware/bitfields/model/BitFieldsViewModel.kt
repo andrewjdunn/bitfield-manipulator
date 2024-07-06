@@ -13,12 +13,6 @@ class BitFieldsViewModel : ViewModel() {
         Binary, Hexadecimal, Decimal
     }
 
-    companion object {
-        // TODO: Need a common place this so that all the numbers can line up. here is good for now
-        val widthPerBit = 50.dp
-        val bitPadding = 5.dp
-    }
-
     val bitfields: List<BitField> get() = _bitfields
     var selectedBitField: BitField? by mutableStateOf(null)
     var overallValueMode: RadixMode by mutableStateOf(RadixMode.Binary)

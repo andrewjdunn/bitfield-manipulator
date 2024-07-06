@@ -13,10 +13,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.hciware.bitfields.model.BitFieldsViewModel
+import com.hciware.bitfields.R
 import com.hciware.bitfields.ui.theme.BitfieldmanipulatorTheme
 
 @Composable
@@ -34,8 +35,8 @@ fun BitRuler(commonScrollState: ScrollState, bitCount: Int, modifier: Modifier =
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                 color = MaterialTheme.colorScheme.surface,
                 modifier = Modifier
-                    .padding(start = BitFieldsViewModel.bitPadding)
-                    .width(BitFieldsViewModel.widthPerBit)
+                    .padding(start = dimensionResource(id = R.dimen.bit_padding))
+                    .width(dimensionResource(id = R.dimen.width_per_bit))
             ) {
                 Text(
                     "${bit + 1}",

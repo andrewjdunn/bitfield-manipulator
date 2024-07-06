@@ -18,7 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.hciware.bitfields.R
 import com.hciware.bitfields.model.BitFieldsViewModel
 import com.hciware.bitfields.model.Field
 import com.hciware.bitfields.ui.theme.BitfieldmanipulatorTheme
@@ -80,8 +82,8 @@ fun BinaryNumberEditor(
 ) {
     Column(
         modifier = modifier
-            .width(BitFieldsViewModel.widthPerBit + BitFieldsViewModel.bitPadding)
-            .padding(start = BitFieldsViewModel.bitPadding)
+            .width(dimensionResource(id = R.dimen.width_per_bit) + dimensionResource(id = R.dimen.bit_padding))
+            .padding(start = dimensionResource(id = R.dimen.bit_padding))
     ) {
         IconButton(onClick = up, enabled = enabled) {
             Icon(Icons.Filled.KeyboardArrowUp, contentDescription = "Increase Value")
@@ -122,10 +124,10 @@ fun HexNumberEditor(
 ) {
     Column(
         modifier
-            .width((BitFieldsViewModel.widthPerBit + BitFieldsViewModel.bitPadding) * ((1 + field.endBit) - field.startBit))
-            .padding(start = BitFieldsViewModel.bitPadding)
+            .width((dimensionResource(id = R.dimen.width_per_bit) + dimensionResource(id = R.dimen.bit_padding)) * ((1 + field.endBit) - field.startBit))
+            .padding(start = dimensionResource(id = R.dimen.bit_padding))
     ) {
-        IconButton(onClick = { field.up() }, enabled = field.enabled,) {
+        IconButton(onClick = { field.up() }, enabled = field.enabled) {
             Icon(Icons.Filled.KeyboardArrowUp, contentDescription = "Increase Value")
         }
 
@@ -139,7 +141,7 @@ fun HexNumberEditor(
             modifier = Modifier.fillMaxWidth()
         )
 
-        IconButton(onClick = { field.down() }, enabled = field.enabled,) {
+        IconButton(onClick = { field.down() }, enabled = field.enabled) {
             Icon(Icons.Filled.KeyboardArrowDown, contentDescription = "Decrease Value")
         }
     }
@@ -161,10 +163,10 @@ fun DecimalNumberEditor(
 ) {
     Column(
         modifier = modifier
-            .width((BitFieldsViewModel.widthPerBit + BitFieldsViewModel.bitPadding) * ((1 + field.endBit) - field.startBit))
-            .padding(start = BitFieldsViewModel.bitPadding)
+            .width((dimensionResource(id = R.dimen.width_per_bit) + dimensionResource(id = R.dimen.bit_padding) * ((1 + field.endBit) - field.startBit)))
+            .padding(start = dimensionResource(id = R.dimen.bit_padding))
     ) {
-        IconButton(onClick = { field.up() }, enabled = field.enabled,) {
+        IconButton(onClick = { field.up() }, enabled = field.enabled) {
             Icon(Icons.Filled.KeyboardArrowUp, contentDescription = "Increase Value")
         }
 
@@ -177,7 +179,7 @@ fun DecimalNumberEditor(
                 maxLines = 1, modifier = Modifier.fillMaxWidth())},
             modifier = Modifier.fillMaxWidth()
         )
-        IconButton(onClick = { field.down() },enabled = field.enabled,) {
+        IconButton(onClick = { field.down() },enabled = field.enabled) {
             Icon(Icons.Filled.KeyboardArrowDown, contentDescription = "Decrease Value")
         }
     }

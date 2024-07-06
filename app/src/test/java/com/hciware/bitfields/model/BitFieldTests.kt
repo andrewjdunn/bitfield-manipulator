@@ -156,13 +156,7 @@ class BitFieldTests {
         bitfield.up(0b1000u)
         assertEquals("207", bitfield.value.value)
         assertEquals("3", bitfield.sections[2].value.value)
-
-
-    // What does contempory kotlin unit testing offer in terms of data driven testing?
-    // TODO:I think I could supply a bunch of commands and expected values to check..
-
     }
-    // Test setting a bit using setValue.. (instead of up/down) noticed that setting "1" == 0
 
     @Test
     fun bitfield_set_empty() {
