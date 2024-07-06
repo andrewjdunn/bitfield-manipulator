@@ -2,7 +2,6 @@ package com.hciware.bitfields.detail
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,12 +19,10 @@ import androidx.compose.ui.unit.dp
 import com.hciware.bitfields.model.BitFieldsViewModel
 import com.hciware.bitfields.ui.theme.BitfieldmanipulatorTheme
 
-// TODO: Don't forget that each bit has a colour that runs vertically from top to bottom
 @Composable
 fun BitRuler(commonScrollState: ScrollState, bitCount: Int, modifier: Modifier = Modifier) {
     Row(
         modifier
-            .background(MaterialTheme.colorScheme.background)
             .horizontalScroll(
                 commonScrollState
             )

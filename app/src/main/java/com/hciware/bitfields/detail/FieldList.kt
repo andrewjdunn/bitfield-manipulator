@@ -57,7 +57,7 @@ fun PreviewFiledList() {
     val model = BitFieldsViewModel()
     BitfieldmanipulatorTheme {
         FieldList(
-            fields = model.bitfields[0].sections,
+            fields = model.bitfields[1].sections,
             BitFieldsViewModel.RadixMode.Decimal,
             rememberScrollState(),
             Modifier

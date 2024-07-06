@@ -1,7 +1,10 @@
 package com.hciware.bitfields.detail
 
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
@@ -13,19 +16,27 @@ import com.hciware.bitfields.ui.theme.BitfieldmanipulatorTheme
 
 // TODO: I called Fields Sections before.. but they are fields, make this consistent
 @Composable
-fun FieldValues(fields: List<BitfieldSection>,
-                mode: BitFieldsViewModel.RadixMode,
-                modeSelected: (BitFieldsViewModel.RadixMode) -> Unit,
-                commonScrollState: ScrollState,
-                modifier: Modifier = Modifier) {
-    Column(modifier) {
+fun FieldValues(
+    fields: List<BitfieldSection>,
+    mode: BitFieldsViewModel.RadixMode,
+    modeSelected: (BitFieldsViewModel.RadixMode) -> Unit,
+    commonScrollState: ScrollState,
+    modifier: Modifier = Modifier
+) {
 
-        RadixSelector(title = "Field Values", mode, modeSelected)
-        // And now a list of fields...
-        // TODO: Nomenclature is getting messy - the landing page is a list of bitfields - but its not its a list of a list of bitfields
-        FieldList(fields, mode, commonScrollState)
+    Box {
+        Row(modifier = Modifier
+            .horizontalScroll(commonScrollState)
+            .matchParentSize()
+        ) {
+            FieldBackgrounds(fields)
+        }
+
+        Column(modifier) {
+            RadixSelector(title = "Field Values", mode, modeSelected)
+            FieldList(fields, mode, commonScrollState)
+        }
     }
-
 }
 
 @Preview
@@ -34,10 +45,12 @@ fun PreviewFieldValues() {
     BitfieldmanipulatorTheme {
         // TODO: Another creeping problem - are bits always described as 1 based or 0..
         val model = BitFieldsViewModel()
-        FieldValues(model.bitfields[0].sections,
+        FieldValues(
+            model.bitfields[1].sections,
             model.fieldsValueMode,
             { _ -> },
             rememberScrollState(),
-            Modifier.fillMaxWidth())
+            Modifier.fillMaxWidth()
+        )
     }
 }

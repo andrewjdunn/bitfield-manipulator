@@ -91,7 +91,7 @@ fun BinaryNumberEditor(
             MutableInteractionSource()
         }.also { mutableInteractionSource -> LaunchedEffect(mutableInteractionSource) {
             mutableInteractionSource.interactions.collect {
-                if (enabled && it is PressInteraction.Press ) {
+                if (enabled && it is PressInteraction.Release ) {
                     toggle()
                 }
             }

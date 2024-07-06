@@ -2,6 +2,7 @@ package com.hciware.bitfields.model
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.graphics.Color
 
 interface Field {
     fun setValue(newValue: String, radix: Int = 10, mask:ULong = ULong.MAX_VALUE)
@@ -24,7 +25,7 @@ private fun getFirstBitOf(mask: ULong): Int {
     return firstBit
 }
 
-private fun getLongValueOrZero(field: Field, mask: ULong): ULong {
+private fun getULongValueOrZero(field: Field, mask: ULong): ULong {
     val longValue = try {
         field.getValue(10, mask).toULong()
     } catch (exception: NumberFormatException) {
@@ -33,7 +34,7 @@ private fun getLongValueOrZero(field: Field, mask: ULong): ULong {
     return longValue
 }
 
-private fun getLongValueOrZero(value: String, radix: Int): ULong {
+private fun getULongValueOrZero(value: String, radix: Int): ULong {
     val longValue = try {
         value.toULong(radix)
     } catch (exception: NumberFormatException) {
@@ -65,7 +66,7 @@ private fun getMaxValueStr(radix: Int, field: Field) : String {
 
 private fun up(mask: ULong, field: Field) {
 
-    val currentMaskedValue =  getLongValueOrZero(field, mask)
+    val currentMaskedValue = getULongValueOrZero(field, mask)
     val firstBit = getFirstBitOf(mask)
     val currentMaskedShiftedValue = currentMaskedValue shr firstBit
     val newMaskedShiftedValue = currentMaskedShiftedValue + 1UL
@@ -77,7 +78,7 @@ private fun up(mask: ULong, field: Field) {
 }
 
 private fun down(mask: ULong, field: Field) {
-    val currentMaskedValue = getLongValueOrZero(field, mask)
+    val currentMaskedValue = getULongValueOrZero(field, mask)
     val newMaskedShiftedValue = currentMaskedValue - 1UL
 
     if(newMaskedShiftedValue in 0UL..<currentMaskedValue) {
@@ -92,13 +93,13 @@ data class BitfieldSection (val bitField: BitField, val name: String, override v
     override fun setValue(newValue: String, radix: Int, mask: ULong) {
 
         if(newValue.isNotEmpty()) {
-            val shiftedValue = getLongValueOrZero(newValue, radix) shl getFirstBitOf(mask)
-            val valueWithoutMaskedBits = (getLongValueOrZero(value.value, 10) and mask.inv())
+            val shiftedValue = getULongValueOrZero(newValue, radix) shl getFirstBitOf(mask)
+            val valueWithoutMaskedBits = (getULongValueOrZero(value.value, 10) and mask.inv())
             val valueWithNewValueBits = (valueWithoutMaskedBits or shiftedValue)
 
             value.value = (valueWithNewValueBits).toString()
         } else {
-            value.value = (getLongValueOrZero(value.value, 10) and mask.inv()).toString().replace("0", "")
+            value.value = (getULongValueOrZero(value.value, 10) and mask.inv()).toString().replace("0", "")
         }
         this.bitField.recalculateValue()
 
@@ -118,13 +119,13 @@ data class BitfieldSection (val bitField: BitField, val name: String, override v
 
     internal fun recalculateValue() {
         val mask = sectionMask()
-        val maskedValue =  getLongValueOrZero(bitField.value.value, 10) and mask
+        val maskedValue = getULongValueOrZero(bitField.value.value, 10) and mask
         value.value = (maskedValue shr startBit).toString()
     }
 
     override fun getValue(radix: Int, mask: ULong): String {
         return if(value.value.isNotEmpty()) {
-            ((getLongValueOrZero(value.value, 10) and mask) shr getFirstBitOf(mask)).toString(radix)
+            ((getULongValueOrZero(value.value, 10) and mask) shr getFirstBitOf(mask)).toString(radix)
         } else {
             value.value
         }
@@ -153,7 +154,27 @@ data class BitfieldSection (val bitField: BitField, val name: String, override v
         get() = name.isNotEmpty()
 
     override val isValueValid: Boolean
-        get() = enabled && getLongValueOrZero(this, ULong.MAX_VALUE) <= getMaxValueStr(10).toULong()
+        get() = enabled && getULongValueOrZero(
+            this,
+            ULong.MAX_VALUE
+        ) <= getMaxValueStr(10).toULong()
+
+
+    val color: Color
+        get() =
+            when (enabled) {
+                true -> when ( bitField.sections.indexOf(this) % 7) {
+                    0 -> Color.Red.copy(alpha = 0.1f)
+                    1 -> Color.Green.copy(alpha = 0.1f)
+                    2 -> Color.Cyan.copy(alpha = 0.1f)
+                    4 -> Color.Blue.copy(alpha = 0.1f)
+                    5 -> Color.Magenta.copy(alpha = 0.1f)
+                    6 -> Color.Yellow.copy(alpha = 0.1f)
+                    else -> {Color.Yellow.copy(alpha = 0.1f)
+                    }
+                }
+                false -> Color.Transparent
+            }
 }
 
 data class BitField(val description: BitfieldDescription, val value: MutableState<String> = mutableStateOf("0")) : Field {
@@ -176,7 +197,7 @@ data class BitField(val description: BitfieldDescription, val value: MutableStat
     internal fun recalculateValue() {
         var newValue = 0UL
         for(s in sections) {
-            newValue = newValue or ( (getLongValueOrZero(s.value.value, 10) shl s.startBit) and s.sectionMask())
+            newValue = newValue or ( (getULongValueOrZero(s.value.value, 10) shl s.startBit) and s.sectionMask())
         }
         value.value = newValue.toString()
     }
@@ -184,13 +205,13 @@ data class BitField(val description: BitfieldDescription, val value: MutableStat
     override fun setValue(newValue: String, radix: Int, mask: ULong) {
 
         if(newValue.isNotEmpty()) {
-            val valueWithoutMaskedBits = getLongValueOrZero(value.value, 10) and mask.inv()
-            val longValue = getLongValueOrZero(newValue, radix) shl getFirstBitOf(mask)
+            val valueWithoutMaskedBits = getULongValueOrZero(value.value, 10) and mask.inv()
+            val longValue = getULongValueOrZero(newValue, radix) shl getFirstBitOf(mask)
             val valueWithNewValueBits = (valueWithoutMaskedBits or (longValue and mask))
 
             value.value = valueWithNewValueBits.toString()
         } else {
-            value.value = (getLongValueOrZero(value.value, 10) and mask.inv()).toString().replace("0", "")
+            value.value = (getULongValueOrZero(value.value, 10) and mask.inv()).toString().replace("0", "")
         }
 
         for (s in sections) {
@@ -201,7 +222,7 @@ data class BitField(val description: BitfieldDescription, val value: MutableStat
     override fun getValue(radix: Int, mask: ULong): String {
         return if(value.value.isNotEmpty()) {
             val firstBit = getFirstBitOf(mask)
-            ((getLongValueOrZero(value.value, 10) and mask) shr firstBit).toString(radix)
+            ((getULongValueOrZero(value.value, 10) and mask) shr firstBit).toString(radix)
         } else {
             value.value
         }
@@ -231,5 +252,5 @@ data class BitField(val description: BitfieldDescription, val value: MutableStat
     override val enabled: Boolean
         get() = true
     override val isValueValid: Boolean
-        get() = getLongValueOrZero(this, ULong.MAX_VALUE) <= ((1UL shl (endBit - startBit) + 1) -1UL)
+        get() = getULongValueOrZero(this, ULong.MAX_VALUE) <= ((1UL shl (endBit - startBit) + 1) -1UL)
 }
