@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.hciware.bitfields.R
 import com.hciware.bitfields.model.BitFieldsViewModel
 import com.hciware.bitfields.model.BitfieldSection
 import com.hciware.bitfields.ui.theme.BitfieldmanipulatorTheme
@@ -35,7 +37,7 @@ fun FieldValues(
         }
 
         Column(modifier) {
-            RadixSelector(title = "Field Values", mode, modeSelected,  modifier = Modifier.padding(horizontal = 10.dp))
+            RadixSelector(title = stringResource(id = R.string.field_values), mode, modeSelected,  modifier = Modifier.padding(horizontal = 10.dp))
             FieldList(fields, mode, commonScrollState)
         }
     }

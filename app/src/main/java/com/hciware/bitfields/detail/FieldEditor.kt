@@ -115,8 +115,6 @@ fun PreviewNumberEditor() {
     }
 }
 
-// TODO: For Hex fields that contain more than one nibble - split the nibbles and align with bits in bit ruler..
-@OptIn(ExperimentalStdlibApi::class)
 @Composable
 fun HexNumberEditor(
     field: Field,
@@ -161,9 +159,10 @@ fun DecimalNumberEditor(
     field: Field,
     modifier: Modifier = Modifier
 ) {
+    val bitCount = ((1 + field.endBit) - field.startBit)
     Column(
         modifier = modifier
-            .width((dimensionResource(id = R.dimen.width_per_bit) + dimensionResource(id = R.dimen.bit_padding) * ((1 + field.endBit) - field.startBit)))
+            .width(((dimensionResource(id = R.dimen.width_per_bit) + dimensionResource(id = R.dimen.bit_padding)) * bitCount))
             .padding(start = dimensionResource(id = R.dimen.bit_padding))
     ) {
         IconButton(onClick = { field.up() }, enabled = field.enabled) {

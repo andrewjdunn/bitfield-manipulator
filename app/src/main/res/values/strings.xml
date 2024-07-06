@@ -14,4 +14,9 @@
     <string name="hexInput">Hex input</string>
     <string name="decimalInput">Decimal input</string>
     <string name="title_activity_bit_field_details">BitFieldDetails</string>
+    <string name="binary">Binary</string>
+    <string name="decimal">Decimal</string>
+    <string name="hexadecimal">Hexadecimal</string>
+    <string name="field_values">Field Values</string>
+    <string name="overall_value">Overall Value</string>
 </resources>

@@ -30,7 +30,6 @@ fun BitRuler(commonScrollState: ScrollState, bitCount: Int, modifier: Modifier =
     ) {
         for (bit in bitCount.downTo(0)) {
             Surface(
-                onClick = { /*TODO*/ },
                 shape = MaterialTheme.shapes.small,
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                 color = MaterialTheme.colorScheme.surface,

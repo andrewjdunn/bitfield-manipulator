@@ -1,16 +1,27 @@
 package com.hciware.bitfields.model
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
+import com.hciware.bitfields.R
 
 class BitFieldsViewModel : ViewModel() {
     private val _bitfields = getSampleBitFields().toMutableList()
 
     enum class RadixMode {
-        Binary, Hexadecimal, Decimal
+        Binary, Hexadecimal, Decimal;
+
+        @Composable
+        fun GetString() : String {
+            return when(this) {
+                Binary -> stringResource(id = R.string.binary)
+                Hexadecimal -> stringResource(id = R.string.hexadecimal)
+                Decimal -> stringResource(id = R.string.decimal)
+            }
+        }
     }
 
     val bitfields: List<BitField> get() = _bitfields

@@ -26,7 +26,6 @@ fun RadixSelector(
 ) {
     Column(modifier) {
         Text(title)
-        // TODO: Add strings the to enum - can be in a string resource?
         val options = BitFieldsViewModel.RadixMode.entries
         SingleChoiceSegmentedButtonRow {
             options.forEachIndexed { index, mode ->
@@ -35,7 +34,7 @@ fun RadixSelector(
                     onClick = {onSelect(mode)},
                     shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size)
                 ) {
-                    Text(mode.toString())
+                    Text(mode.GetString())
                 }
             }
         }
