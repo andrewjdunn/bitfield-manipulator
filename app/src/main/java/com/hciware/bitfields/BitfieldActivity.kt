@@ -29,7 +29,9 @@ class BitfieldActivity : ComponentActivity() {
                                 { mode -> bitFieldsViewModel.overallValueMode = mode },
                                 bitFieldsViewModel.fieldsValueMode,
                                 { mode -> bitFieldsViewModel.fieldsValueMode = mode },
-                                selectedBitfield
+                                selectedBitfield,
+                                bitFieldsViewModel.editMode,
+                                { editMode -> bitFieldsViewModel.editMode = editMode}
                             )
                         }
                     }

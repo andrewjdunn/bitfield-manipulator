@@ -28,6 +28,7 @@ class BitFieldsViewModel : ViewModel() {
     var selectedBitField: BitField? by mutableStateOf(null)
     var overallValueMode: RadixMode by mutableStateOf(RadixMode.Binary)
     var fieldsValueMode: RadixMode by mutableStateOf(RadixMode.Binary)
+    var editMode: Boolean by mutableStateOf(false)
 
     fun selectBitField(bitfield: BitField) {
         selectedBitField = bitfield

@@ -28,6 +28,7 @@ fun FieldList(
     fields: List<BitfieldSection>,
     mode: BitFieldsViewModel.RadixMode,
     commonScrollState: ScrollState,
+    editMode: Boolean,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -39,7 +40,8 @@ fun FieldList(
         fields.forEach { field ->
             Field(
                 field = field,
-                mode
+                mode,
+                editMode
             )
             VerticalDivider(
                 color = MaterialTheme.colorScheme.outlineVariant,
@@ -60,6 +62,7 @@ fun PreviewFiledList() {
             fields = model.bitfields[1].sections,
             BitFieldsViewModel.RadixMode.Decimal,
             rememberScrollState(),
+            editMode = false,
             Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.background)
@@ -71,14 +74,17 @@ fun PreviewFiledList() {
 fun Field(
     field: BitfieldSection,
     mode: BitFieldsViewModel.RadixMode,
+    editMode: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
+
         Text(
             text = field.name,
             style = MaterialTheme.typography.labelSmall,
             modifier = modifier.padding(start = 10.dp)
         )
+
         Text(text = field.getMaxValueStr(when(mode) {
             BitFieldsViewModel.RadixMode.Binary -> 2
             BitFieldsViewModel.RadixMode.Hexadecimal -> 16
@@ -88,10 +94,15 @@ fun Field(
             color = MaterialTheme.colorScheme.primary,
             modifier = modifier.padding(start = 10.dp)
         )
-        FieldEditor(
-            field,
-            mode
-        )
+        if(editMode) {
+            FieldDefinitionEditor(field)
+        }
+        else {
+            FieldEditor(
+                field,
+                mode
+            )
+        }
     }
 }
 
@@ -104,6 +115,7 @@ fun PreviewField() {
         Field(
             field = field,
             BitFieldsViewModel.RadixMode.Decimal,
+            false,
             Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.background)

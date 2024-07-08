@@ -25,6 +25,7 @@ fun FieldValues(
     mode: BitFieldsViewModel.RadixMode,
     modeSelected: (BitFieldsViewModel.RadixMode) -> Unit,
     commonScrollState: ScrollState,
+    editMode: Boolean,
     modifier: Modifier = Modifier
 ) {
 
@@ -38,7 +39,7 @@ fun FieldValues(
 
         Column(modifier) {
             RadixSelector(title = stringResource(id = R.string.field_values), mode, modeSelected,  modifier = Modifier.padding(horizontal = 10.dp))
-            FieldList(fields, mode, commonScrollState)
+            FieldList(fields, mode, commonScrollState, editMode)
         }
     }
 }
@@ -54,6 +55,7 @@ fun PreviewFieldValues() {
             model.fieldsValueMode,
             { _ -> },
             rememberScrollState(),
+            false,
             Modifier.fillMaxWidth()
         )
     }

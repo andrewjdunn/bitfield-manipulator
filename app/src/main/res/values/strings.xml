@@ -19,4 +19,9 @@
     <string name="hexadecimal">Hexadecimal</string>
     <string name="field_values">Field Values</string>
     <string name="overall_value">Overall Value</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="add_bit_left">Add Bit Left</string>
+    <string name="add_bit_right">Add Bit Right</string>
+    <string name="add_field_section">Add Field Section</string>
 </resources>

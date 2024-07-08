@@ -24,6 +24,7 @@ fun DetailContent(fields: List<BitfieldSection>,
                   fieldValuesMode: BitFieldsViewModel.RadixMode,
                   fieldValuesModeSelected: (BitFieldsViewModel.RadixMode) -> Unit,
                   overallField: Field,
+                  editMode: Boolean,
                   modifier: Modifier = Modifier) {
     Column (modifier.verticalScroll(rememberScrollState())) {
         val commonScrollState = rememberScrollState()
@@ -46,7 +47,8 @@ fun DetailContent(fields: List<BitfieldSection>,
             fields,
             fieldValuesMode,
             fieldValuesModeSelected,
-            commonScrollState)
+            commonScrollState,
+            editMode)
     }
 }
 
@@ -62,6 +64,7 @@ fun PreviewDetailContent() {
             model.fieldsValueMode,
             {_ ->},
             model.selectedBitField!!,
+            editMode = true,
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background))
