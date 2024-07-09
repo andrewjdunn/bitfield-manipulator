@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -17,6 +19,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
@@ -32,6 +38,7 @@ import com.hciware.bitfields.ui.theme.BitfieldmanipulatorTheme
 fun FieldDefinitionEditor(field: BitfieldSection, modifier: Modifier = Modifier) {
 
     val bitCount = ((1 + field.endBit) - field.startBit)
+    var editingName by rememberSaveable { mutableStateOf(false) }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -44,7 +51,7 @@ fun FieldDefinitionEditor(field: BitfieldSection, modifier: Modifier = Modifier)
             )
 
     ) {
-        IconButton(onClick = { TODO() }, enabled = field.enabled) {
+        IconButton(onClick = { editingName = true }, enabled = field.enabled && !editingName) {
             Icon(Icons.Filled.Edit, contentDescription = stringResource(id = R.string.edit))
         }
 
@@ -55,30 +62,35 @@ fun FieldDefinitionEditor(field: BitfieldSection, modifier: Modifier = Modifier)
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                IconButton(onClick = { TODO() }, modifier.size(20.dp)) {
+                IconButton(onClick = { field.addBitLeft() }, modifier.size(20.dp)) {
                     Icon(
-                        Icons.Filled.AddCircle,
+                        Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                         contentDescription = stringResource(id = R.string.add_bit_left)
                     )
                 }
-                IconButton(onClick = { TODO() }, modifier.size(20.dp)) {
+                IconButton(onClick = { field.addBitRight() }, modifier.size(20.dp)) {
                     Icon(
-                        Icons.Filled.AddCircle,
+                        Icons.AutoMirrored.Filled.KeyboardArrowRight,
                         contentDescription = stringResource(id = R.string.add_bit_right)
                     )
                 }
             }
         } else {
-            IconButton(onClick = { TODO() }, modifier.size(20.dp)) {
+            IconButton(onClick = { field.addMe() }, modifier.size(20.dp)) {
                 Icon(
                     Icons.Filled.AddCircle,
                     contentDescription = stringResource(id = R.string.add_field_section)
                 )
             }
         }
-        IconButton(onClick = { TODO() }, enabled = field.enabled) {
+        IconButton(onClick = { field.delete() }, enabled = field.enabled) {
             Icon(Icons.Filled.Delete, contentDescription = stringResource(id = R.string.delete))
         }
+    }
+    if(editingName) {
+        NameEditor({
+            editingName = false
+            field.setName(it)}, field.name)
     }
 }
 
@@ -86,7 +98,7 @@ fun FieldDefinitionEditor(field: BitfieldSection, modifier: Modifier = Modifier)
 @Composable
 fun PreviewFieldDefinitionEditor() {
     val model = BitFieldsViewModel()
-    val field = model.bitfields[1].sections[2]
+    val field = model.bitfields[1].sections[3]
     BitfieldmanipulatorTheme {
         Surface(
             onClick = { /*TODO*/ },

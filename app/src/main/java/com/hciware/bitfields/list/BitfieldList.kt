@@ -18,7 +18,7 @@ fun BitfieldList(
     LazyColumn(modifier = modifier) {
         items(items = list, key = {item: BitField -> item.description.id }) {
             item: BitField -> BitFieldListItem(
-            name = item.description.name, modifier = modifier, onClick = { onClick(item) }
+            name = item.description.name.value, modifier = modifier, onClick = { onClick(item) }
             )
         }
     }

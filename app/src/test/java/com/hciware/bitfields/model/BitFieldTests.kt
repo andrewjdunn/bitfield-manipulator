@@ -1,5 +1,6 @@
 package com.hciware.bitfields.model
 
+import androidx.compose.runtime.mutableStateOf
 import io.kotest.core.spec.style.AnnotationSpec
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -12,7 +13,7 @@ class BitFieldTests {
 
         // Setup
         val bitfield = BitField(
-            BitfieldDescription(0, "Test Bitfield"))
+            BitfieldDescription(0, mutableStateOf("Test Bitfield")))
 
         // Test
         assertEquals("0", bitfield.value.value)
@@ -23,7 +24,7 @@ class BitFieldTests {
 
         // Setup
         val bitfield = BitField(
-            BitfieldDescription(0, "Test Bitfield"))
+            BitfieldDescription(0, mutableStateOf("Test Bitfield")))
         bitfield.addBitfieldSection("Bit 1",0,0)
 
         bitfield.sections[0].setValue("1")
@@ -37,7 +38,7 @@ class BitFieldTests {
 
         // Setup
         val bitfield = BitField(
-            BitfieldDescription(0, "Test Bitfield"))
+            BitfieldDescription(0, mutableStateOf("Test Bitfield")))
         bitfield.addBitfieldSection("Bit 1",0,0)
 
         bitfield.setValue("1")
@@ -52,7 +53,7 @@ class BitFieldTests {
 
         // Setup
         val bitfield = BitField(
-            BitfieldDescription(0, "Test Bitfield"))
+            BitfieldDescription(0, mutableStateOf("Test Bitfield")))
         bitfield.addBitfieldSection("Nibble 1",1,4)
         bitfield.addBitfieldSection("Bit 1",0,0)
 
@@ -68,7 +69,7 @@ class BitFieldTests {
     fun bitfield_getBits() {
 
         // Setup
-        val bitField = BitField(BitfieldDescription(0, "Two Fields"))
+        val bitField = BitField(BitfieldDescription(0, mutableStateOf("Two Fields")))
         bitField.addBitfieldSection("Nibble 2", 4, 7)
         bitField.addBitfieldSection("Nibble 1", 0, 3)
 
@@ -104,7 +105,7 @@ class BitFieldTests {
     @Test
     fun bitfield_up_binary() {
         // Setup
-        val bitfield = BitField(BitfieldDescription(0, "Some Fields"))
+        val bitfield = BitField(BitfieldDescription(0, mutableStateOf("Some Fields")))
 
         bitfield.addBitfieldSection("Section 4", 6,7)
         bitfield.addBitfieldSection("Section 3", 4,5)
@@ -161,7 +162,7 @@ class BitFieldTests {
     @Test
     fun bitfield_set_empty() {
         // Setup
-        val bitfield = BitField(BitfieldDescription(0, "Some Fields"))
+        val bitfield = BitField(BitfieldDescription(0, mutableStateOf("Some Fields")))
 
         bitfield.addBitfieldSection("Section 4", 6, 7)
         bitfield.addBitfieldSection("Section 3", 4, 5)
@@ -180,7 +181,7 @@ class BitFieldTests {
     @Test
     fun bitfield_set_section_empty() {
         // Setup
-        val bitfield = BitField(BitfieldDescription(0, "Some Fields"))
+        val bitfield = BitField(BitfieldDescription(0, mutableStateOf("Some Fields")))
 
         bitfield.addBitfieldSection("Section 4", 6, 7)
         bitfield.addBitfieldSection("Section 3", 4, 5)
@@ -201,7 +202,7 @@ class BitFieldTests {
 
     @Test
     fun bitfield_set_section_bit_empty() {
-        val bitfield = BitField(BitfieldDescription(0, "Some Fields"))
+        val bitfield = BitField(BitfieldDescription(0, mutableStateOf("Some Fields")))
 
         bitfield.addBitfieldSection("Section 4", 6, 7)
         bitfield.addBitfieldSection("Section 3", 4, 5)
@@ -222,7 +223,7 @@ class BitFieldTests {
 
     @Test
     fun bitfield_set_section_3_bit_empty() {
-        val bitfield = BitField(BitfieldDescription(0, "Some Fields"))
+        val bitfield = BitField(BitfieldDescription(0, mutableStateOf("Some Fields")))
 
         bitfield.addBitfieldSection("Section 4", 6, 7)
         bitfield.addBitfieldSection("Section 3", 4, 5)
@@ -243,7 +244,7 @@ class BitFieldTests {
 
     @Test
     fun bitfield_set_overall_bit_empty() {
-        val bitfield = BitField(BitfieldDescription(0, "Some Fields"))
+        val bitfield = BitField(BitfieldDescription(0, mutableStateOf("Some Fields")))
 
         bitfield.addBitfieldSection("Section 4", 6, 7)
         bitfield.addBitfieldSection("Section 3", 4, 5)
@@ -266,7 +267,7 @@ class BitFieldTests {
     @AnnotationSpec.Ignore
     fun bitfield_set_section_clear_binary() {
         // Ignore this because it's tricky to fix - but if I stop a field being set to "" it will be fine
-        val bitfield = BitField(BitfieldDescription(0, "Some Fields"))
+        val bitfield = BitField(BitfieldDescription(0, mutableStateOf("Some Fields")))
         bitfield.addBitfieldSection("Section 4", 6, 7)
         bitfield.addBitfieldSection("Section 3", 4, 5)
         bitfield.addBitfieldSection("Section 2", 2, 3)

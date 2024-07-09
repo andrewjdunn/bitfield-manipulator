@@ -73,9 +73,9 @@ public class BitFieldDBHelper extends SQLiteOpenHelper {
 	public void setBitField(final BitField updatedBitField) {
 		SQLiteDatabase db = getWritableDatabase();
 		ContentValues values = new ContentValues();
-		values.put(Field_Name, updatedBitField.getDescription().getName());
+		values.put(Field_Name, updatedBitField.getDescription().getName().getValue());
 		// TODO: The same.. whats the point?
-		values.put(Field_Description, updatedBitField.getDescription().getName());
+		values.put(Field_Description, updatedBitField.getDescription().getName().getValue());
 		db.update(Table_BitFields, values, "rowid = ?",
 				new String[] { String.valueOf(updatedBitField.getDescription().getId()) });
 		db.close();
@@ -111,7 +111,7 @@ public class BitFieldDBHelper extends SQLiteOpenHelper {
 			int nameColId = cursor.getColumnIndex(Field_Name);
 			long rowId = cursor.getLong(rowIdColId);
 			String name = cursor.getString(nameColId);
-			fieldList.add(new BitField(new BitfieldDescription(rowId, name), mutableStateOf("0", structuralEqualityPolicy())));
+			fieldList.add(new BitField(new BitfieldDescription(rowId, mutableStateOf(name, structuralEqualityPolicy())), mutableStateOf("0", structuralEqualityPolicy())));
 			cursor.moveToNext();
 		}
 		// TODO: Should the sections in the fields be populated here?

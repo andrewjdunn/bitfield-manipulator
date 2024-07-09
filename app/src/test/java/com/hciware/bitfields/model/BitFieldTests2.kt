@@ -1,5 +1,6 @@
 package com.hciware.bitfields.model
 
+import androidx.compose.runtime.mutableStateOf
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withData
 import io.kotest.matchers.shouldBe
@@ -19,7 +20,7 @@ class BitFieldTests2 : FunSpec({
     context("Result") {
         beforeTest {
             bitfield = BitField(
-            BitfieldDescription(2, "Result")
+            BitfieldDescription(2, mutableStateOf("Result"))
         )
             .addBitfieldSection("Stored", 12, 12)
             .addBitfieldSection("Success", 11, 11)

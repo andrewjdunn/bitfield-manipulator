@@ -38,13 +38,13 @@ class BitFieldsViewModel : ViewModel() {
     // Maybe a implementation of a model interface..s
     private fun getSampleBitFields() = listOf(
         BitField(
-            BitfieldDescription(1,"IPV4 Address"))
+            BitfieldDescription(1, mutableStateOf("IPV4 Address")))
             .addBitfieldSection("Octet 4",24, 31)
             .addBitfieldSection("Octet 3",16, 23)
             .addBitfieldSection("Octet 2",8, 15)
             .addBitfieldSection("Octet 1",0, 7),
         BitField(
-            BitfieldDescription(2, "Result"))
+            BitfieldDescription(2, mutableStateOf("Result")))
             .addBitfieldSection( "Stored", 12, 12)
             .addBitfieldSection( "Success", 11, 11)
             .addBitfieldSection( "Label 1", 5, 9)

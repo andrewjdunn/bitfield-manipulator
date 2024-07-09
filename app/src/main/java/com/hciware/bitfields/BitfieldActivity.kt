@@ -23,8 +23,9 @@ class BitfieldActivity : ComponentActivity() {
                     bitFieldsViewModel.selectedBitField?.let { selectedBitfield ->
                         selectedBitfield.description.name.let {
                             DetailScreen(
-                                name = it,
-                                fields = bitFieldsViewModel.selectedBitField?.sections!!,
+                                name = it.value,
+                                {name -> selectedBitfield.description.name.value = name},
+                                fields = selectedBitfield.sections,
                                 bitFieldsViewModel.overallValueMode,
                                 { mode -> bitFieldsViewModel.overallValueMode = mode },
                                 bitFieldsViewModel.fieldsValueMode,

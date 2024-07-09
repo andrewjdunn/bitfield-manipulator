@@ -2,6 +2,7 @@ package com.hciware.bitfields.model
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.graphics.Color
 
 interface Field {
@@ -87,12 +88,12 @@ private fun down(mask: ULong, field: Field) {
     }
 }
 
-data class BitfieldDescription (val id: Long, val name: String)
+data class BitfieldDescription (val id: Long, var name: MutableState<String>)
 
 data class BitfieldSection (val bitField: BitField, val name: String, override val startBit: Int, override val endBit: Int, var value: MutableState<String> = mutableStateOf("0")) : Field {
     override fun setValue(newValue: String, radix: Int, mask: ULong) {
 
-        if(newValue.isNotEmpty()) {
+        if (newValue.isNotEmpty()) {
             val shiftedValue = getULongValueOrZero(newValue, radix) shl getFirstBitOf(mask)
             val valueWithoutMaskedBits = (getULongValueOrZero(value.value, 10) and mask.inv())
             val valueWithNewValueBits = (valueWithoutMaskedBits or shiftedValue)
@@ -106,11 +107,11 @@ data class BitfieldSection (val bitField: BitField, val name: String, override v
         println("Section $name Set value $newValue with mask $mask Section Value ${value.value} Bitfield Value ${bitField.value.value}")
     }
 
-    fun sectionMask() : ULong {
+    fun sectionMask(): ULong {
         var mask = 0UL
 
-        for(i in 0..63) {
-            if(i in startBit..endBit) {
+        for (i in 0..63) {
+            if (i in startBit..endBit) {
                 mask = mask or (1UL shl i)
             }
         }
@@ -124,18 +125,21 @@ data class BitfieldSection (val bitField: BitField, val name: String, override v
     }
 
     override fun getValue(radix: Int, mask: ULong): String {
-        return if(value.value.isNotEmpty()) {
-            ((getULongValueOrZero(value.value, 10) and mask) shr getFirstBitOf(mask)).toString(radix)
+        return if (value.value.isNotEmpty()) {
+            ((getULongValueOrZero(
+                value.value,
+                10
+            ) and mask) shr getFirstBitOf(mask)).toString(radix)
         } else {
             value.value
         }
     }
 
     override fun getInvalidValueText(radix: Int): String {
-        return if(isValueValid || !enabled) "" else "> ${getMaxValueStr(radix)}"
+        return if (isValueValid || !enabled) "" else "> ${getMaxValueStr(radix)}"
     }
 
-    override fun getMaxValueStr(radix: Int) : String {
+    override fun getMaxValueStr(radix: Int): String {
         return getMaxValueStr(radix, this)
     }
 
@@ -150,6 +154,28 @@ data class BitfieldSection (val bitField: BitField, val name: String, override v
         down(mask, this)
     }
 
+    // TODO:Add unit test for these editors
+    fun delete() {
+        bitField.removeBitfieldSection(this)
+    }
+
+    fun addMe() {
+        // TODO; Add string resource for new... or generate a name based on bits? or index (section 2..)/
+        bitField.replaceBitfieldSection("new", this)
+    }
+
+    fun addBitLeft() {
+        bitField.expandFieldLeft(this)
+    }
+
+    fun addBitRight() {
+        bitField.expandFieldRight(this)
+    }
+
+    fun setName(newName: String) {
+        bitField.replaceBitfieldSection(newName, this)
+    }
+
     override val enabled: Boolean
         get() = name.isNotEmpty()
 
@@ -160,38 +186,85 @@ data class BitfieldSection (val bitField: BitField, val name: String, override v
         ) <= getMaxValueStr(10).toULong()
 
 
+    private val _color = getColourForIndex(startBit)
     val color: Color
         get() =
             when (enabled) {
-                true -> when ( bitField.sections.indexOf(this) % 7) {
-                    0 -> Color.Red.copy(alpha = 0.1f)
-                    1 -> Color.Green.copy(alpha = 0.1f)
-                    2 -> Color.Cyan.copy(alpha = 0.1f)
-                    4 -> Color.Blue.copy(alpha = 0.1f)
-                    5 -> Color.Magenta.copy(alpha = 0.1f)
-                    6 -> Color.Yellow.copy(alpha = 0.1f)
-                    else -> {Color.Yellow.copy(alpha = 0.1f)
-                    }
-                }
+                true -> _color
                 false -> Color.Transparent
             }
+
+    private fun getColourForIndex(index: Int) : Color {
+        return when ( index % 7) {
+            0 -> Color.Red.copy(alpha = 0.1f)
+            1 -> Color.Green.copy(alpha = 0.1f)
+            2 -> Color.Cyan.copy(alpha = 0.1f)
+            4 -> Color.Blue.copy(alpha = 0.1f)
+            5 -> Color.Magenta.copy(alpha = 0.1f)
+            6 -> Color.Yellow.copy(alpha = 0.1f)
+            else -> Color.Yellow.copy(alpha = 0.1f)
+        }
+    }
 }
+
+
 
 data class BitField(val description: BitfieldDescription, val value: MutableState<String> = mutableStateOf("0")) : Field {
 
-    val sections: ArrayList<BitfieldSection> = ArrayList()
+    private val sectionsState = listOf<BitfieldSection>().toMutableStateList()
+    val sections: MutableList<BitfieldSection> get() = sectionsState
+
     fun addBitfieldSection(name: String, startBit: Int, endBit: Int) : BitField {
-        if(sections.isNotEmpty())
-        {
-            val previousStartBit = sections.last().startBit
-            if(previousStartBit - endBit > 1)
-            {
-                println("Gap before $name Prev start bit $previousStartBit")
-                sections.add(BitfieldSection(this,"", previousStartBit - 1, endBit + 1))
-            }
-        }
         sections.add(BitfieldSection(this,name, startBit, endBit))
+        refreshGapFieldSections()
         return this
+    }
+
+    // TODO: Add units tests for remove and replace
+    fun removeBitfieldSection(section: BitfieldSection) {
+        sections.remove(section)
+        refreshGapFieldSections()
+        recalculateValue()
+    }
+
+    fun replaceBitfieldSection(newName:String, section: BitfieldSection) {
+        sections[sections.indexOf(section)] = BitfieldSection(this, newName, section.startBit, section.endBit)
+        refreshGapFieldSections()
+    }
+
+    private fun refreshGapFieldSections() {
+        if(sections.size > 1)
+        {
+            sections.forEach{ println(" section $it") }
+            sections.removeIf { !it.enabled }
+
+            val updateMap: MutableMap<Int, BitfieldSection> = mutableMapOf()
+
+            var lastStart = sections.first().startBit
+            sections.subList(1, sections.size).forEach { section ->
+                val gap =  lastStart - section.endBit
+                println("Start before ${section.name} [${section.startBit} : ${section.endBit}] is $lastStart gap is $gap")
+                if(gap>1) {
+                    println("Adding gap after ${section.name} Start ${lastStart-1} endBit ${section.endBit + 1}")
+                updateMap[sections.indexOf(section)] = BitfieldSection(this,"", section.endBit + 1, lastStart - 1)
+                }
+                lastStart = section.startBit
+            }
+
+            val endGap = lastStart - 0
+            if(endGap > 0) {
+                println("Adding end gap  Start ${lastStart-1} endBit ${lastStart -1}")
+                updateMap[sections.size] = BitfieldSection(this,"", 0, lastStart - 1)
+            }
+
+            if(sections[0].enabled) {
+                updateMap[0] = BitfieldSection(this,"", sections[0].endBit+1, sections[0].endBit + 1)
+
+            }
+
+            updateMap.forEach { (t, u) -> sections.add(t, u) }
+            sections.forEach{ println(" section $it") }
+        }
     }
 
     internal fun recalculateValue() {
@@ -245,10 +318,51 @@ data class BitField(val description: BitfieldDescription, val value: MutableStat
         down(mask, this)
     }
 
+    fun expandFieldLeft(section: BitfieldSection) {
+        val sectionIndex = sections.indexOf(section)
+        val sectionToLeftIndex = sectionIndex - 1
+        if (sectionToLeftIndex >= 0) {
+            val sectionToLeft = sections[sectionToLeftIndex]
+
+            sections[sectionToLeftIndex] = BitfieldSection(
+                this,
+                sectionToLeft.name,
+                sectionToLeft.startBit + 1,
+                sectionToLeft.endBit
+            )
+
+            // Purge empty field sections
+            sections.removeIf { it.endBit - it.startBit < 0 }
+        }
+        sections[sectionIndex] =
+            BitfieldSection(this, section.name, section.startBit , section.endBit + 1)
+    }
+
+    fun expandFieldRight(section: BitfieldSection) {
+
+        val sectionIndex = sections.indexOf(section)
+        val sectionToRightIndex = sectionIndex + 1
+        if (sections.size > sectionToRightIndex) {
+            val sectionToRight = sections[sectionToRightIndex]
+
+            sections[sectionToRightIndex] = BitfieldSection(
+                this,
+                sectionToRight.name,
+                sectionToRight.startBit,
+                sectionToRight.endBit - 1
+            )
+            sections[sectionIndex] =
+                BitfieldSection(this, section.name, section.startBit - 1, section.endBit)
+
+            // Purge empty field sections
+            sections.removeIf { it.endBit - it.startBit < 0 }
+        }
+    }
+
     override val startBit: Int
         get() = 0
     override val endBit: Int
-        get() = sections.maxOf { section -> section.endBit }
+        get() = if(sections.isNotEmpty()) sections.maxOf { section -> section.endBit } else 0
     override val enabled: Boolean
         get() = true
     override val isValueValid: Boolean
