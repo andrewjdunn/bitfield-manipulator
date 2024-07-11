@@ -33,11 +33,11 @@ class BitFieldTests2 : FunSpec({
             mapOf(
                 "Set Zero" to BitFieldInput(0, "0", ULong.MAX_VALUE, listOf(0, 0, 0, 0)),
                 "Set One" to BitFieldInput(0, "1", ULong.MAX_VALUE, listOf(1, 0, 0, 0)),
-                "Section 1 bit 1" to BitFieldInput(5, "1", 0b1u, listOf(1, 0, 0, 0, 1)),
-                "Section 1 bit 2" to BitFieldInput(5, "1", 0b10u, listOf(2, 0, 0, 0, 2)),
+                "Section 1 bit 1" to BitFieldInput(5, "1", 0b1u, listOf(32, 0, 0, 0, 1)),
+                "Section 1 bit 2" to BitFieldInput(5, "1", 0b10u, listOf(64, 0, 0, 0, 2)),
                 "Set Bit 2" to BitFieldInput(0, "1", 0b10u, listOf(2, 0, 0, 0, 2)),
                 "Set zero" to BitFieldInput(0, "0", ULong.MAX_VALUE, listOf(0, 0, 0, 0, 0)),
-                "Overfill Field" to BitFieldInput(5, "63", ULong.MAX_VALUE, listOf(31, 0, 0, 0, 63))
+                "Overfill Field" to BitFieldInput(6, "63", ULong.MAX_VALUE, listOf(31, 0, 0, 0, 0, 63))
             )
         ) { input ->
             withData(InputMethod.entries) { method ->
