@@ -44,7 +44,7 @@ fun OverallValue(
 @Preview
 @Composable
 fun PreviewOverallValue() {
-    val model = BitFieldsViewModel()
+    val model = BitFieldsViewModel().addSampledData()
     BitfieldmanipulatorTheme {
         OverallValue(
             model.bitfields[1],

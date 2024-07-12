@@ -220,7 +220,6 @@ data class BitField(val description: BitfieldDescription, val value: MutableStat
         return this
     }
 
-    // TODO: Add units tests for remove and replace
     fun removeBitfieldSection(section: BitfieldSection) {
         sections.remove(section)
         refreshGapFieldSections()

@@ -30,7 +30,7 @@ fun BitfieldList(
 @Preview
 @Composable
 fun BitfieldListPreview() {
-    val model = BitFieldsViewModel()
+    val model = BitFieldsViewModel().addSampledData()
     BitfieldmanipulatorTheme {
         BitfieldList(list = model.bitfields, modifier = Modifier.fillMaxSize())
     }

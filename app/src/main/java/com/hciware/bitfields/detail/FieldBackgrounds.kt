@@ -37,7 +37,7 @@ fun FieldBackgrounds(fields: List<BitfieldSection>) {
 @Composable
 private fun PreviewFieldBackground() {
     BitfieldmanipulatorTheme {
-        val model = BitFieldsViewModel()
+        val model = BitFieldsViewModel().addSampledData()
         Row(modifier = Modifier
             .height(75.dp)
             .fillMaxWidth()) {

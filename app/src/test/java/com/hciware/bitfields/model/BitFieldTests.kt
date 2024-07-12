@@ -87,7 +87,7 @@ class BitFieldTests {
     @Test
     fun bitfield_up_result_data() {
         // Setup
-        val bitfield = BitFieldsViewModel().bitfields[1]
+        val bitfield = BitFieldsViewModel().addSampledData().bitfields[1]
 
         // Test & Verify
         assertEquals("0", bitfield.value.value)

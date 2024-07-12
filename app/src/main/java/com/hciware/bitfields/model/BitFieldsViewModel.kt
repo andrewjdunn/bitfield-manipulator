@@ -2,15 +2,15 @@ package com.hciware.bitfields.model
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import com.hciware.bitfields.R
 
 class BitFieldsViewModel : ViewModel() {
-    private val _bitfields = getSampleBitFields().toMutableStateList()
+    private val _bitfields = mutableStateListOf<BitField>()
 
     enum class RadixMode {
         Binary, Hexadecimal, Decimal;
@@ -36,19 +36,23 @@ class BitFieldsViewModel : ViewModel() {
     }
 
     fun addNew() {
-        val nextId = _bitfields.maxOf { it.description.id } + 1
+        val nextId = if(_bitfields.isNotEmpty()) _bitfields.maxOf { it.description.id } + 1 else 1
         _bitfields.add(BitField(
             BitfieldDescription(nextId,
                 mutableStateOf("new") )
-        ))
+        ).addBitfieldSection("new",0,3))
     }
 
     fun delete(bitfield: BitField) {
         _bitfields.remove(bitfield)
     }
 
-    // TODO: We want to keep this list indefinitely - not when hooked up to the database - but when previewing. somehow
-    // Maybe a implementation of a model interface..s
+    fun addSampledData(): BitFieldsViewModel {
+        _bitfields.addAll(getSampleBitFields())
+        return this
+    }
+
+
     private fun getSampleBitFields() = listOf(
         BitField(
             BitfieldDescription(1, mutableStateOf("IPV4 Address")))

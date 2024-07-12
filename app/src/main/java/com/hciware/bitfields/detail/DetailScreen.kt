@@ -103,7 +103,7 @@ fun DetailScreen(
 @Preview(showBackground = true)
 @Composable
 fun DetailScreenPreview() {
-    val model = BitFieldsViewModel()
+    val model = BitFieldsViewModel().addSampledData()
     val name = model.bitfields[1].description.name
     val fields = model.bitfields[1].sections
     model.fieldsValueMode = BitFieldsViewModel.RadixMode.Decimal
