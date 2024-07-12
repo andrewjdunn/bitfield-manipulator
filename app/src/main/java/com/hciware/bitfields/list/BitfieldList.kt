@@ -14,11 +14,14 @@ import com.hciware.bitfields.ui.theme.BitfieldmanipulatorTheme
 fun BitfieldList(
     list: List<BitField>,
     modifier: Modifier = Modifier,
-    onClick: (BitField) -> Unit = {}) {
+    onSelect: (BitField) -> Unit = {},
+    onDelete: (BitField) -> Unit = {}) {
     LazyColumn(modifier = modifier) {
         items(items = list, key = {item: BitField -> item.description.id }) {
             item: BitField -> BitFieldListItem(
-            name = item.description.name.value, modifier = modifier, onClick = { onClick(item) }
+            name = item.description.name.value,
+            onClick = { onSelect(item) },
+            onDelete = {onDelete(item)}
             )
         }
     }

@@ -21,6 +21,7 @@
     <string name="overall_value">Overall Value</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
+    <string name="add">Add</string>
     <string name="add_bit_left">Add Bit Left</string>
     <string name="add_bit_right">Add Bit Right</string>
     <string name="add_field_section">Add Field Section</string>

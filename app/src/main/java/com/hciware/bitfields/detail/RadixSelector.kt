@@ -34,7 +34,7 @@ fun RadixSelector(
                     onClick = {onSelect(mode)},
                     shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size)
                 ) {
-                    Text(mode.GetString())
+                    Text(mode.getString())
                 }
             }
         }

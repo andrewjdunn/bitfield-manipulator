@@ -4,18 +4,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import com.hciware.bitfields.R
 
 class BitFieldsViewModel : ViewModel() {
-    private val _bitfields = getSampleBitFields().toMutableList()
+    private val _bitfields = getSampleBitFields().toMutableStateList()
 
     enum class RadixMode {
         Binary, Hexadecimal, Decimal;
 
         @Composable
-        fun GetString() : String {
+        fun getString() : String {
             return when(this) {
                 Binary -> stringResource(id = R.string.binary)
                 Hexadecimal -> stringResource(id = R.string.hexadecimal)
@@ -32,6 +33,18 @@ class BitFieldsViewModel : ViewModel() {
 
     fun selectBitField(bitfield: BitField) {
         selectedBitField = bitfield
+    }
+
+    fun addNew() {
+        val nextId = _bitfields.maxOf { it.description.id } + 1
+        _bitfields.add(BitField(
+            BitfieldDescription(nextId,
+                mutableStateOf("new") )
+        ))
+    }
+
+    fun delete(bitfield: BitField) {
+        _bitfields.remove(bitfield)
     }
 
     // TODO: We want to keep this list indefinitely - not when hooked up to the database - but when previewing. somehow
