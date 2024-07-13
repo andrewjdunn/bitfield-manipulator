@@ -1,5 +1,6 @@
 package com.hciware.bitfields.detail
 
+import android.app.Application
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
@@ -55,7 +56,7 @@ fun DetailContent(fields: List<BitfieldSection>,
 @Preview
 @Composable
 fun PreviewDetailContent() {
-    val model = BitFieldsViewModel().addSampledData()
+    val model = BitFieldsViewModel(Application()).addSampledData()
     model.selectedBitField = model.bitfields[0]
     BitfieldmanipulatorTheme {
         DetailContent(model.bitfields[1].sections,

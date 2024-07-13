@@ -42,6 +42,7 @@ fun DetailScreen(
     overallField: Field,
     editMode: Boolean,
     setEditMode: (Boolean) -> Unit,
+    save: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -71,7 +72,9 @@ fun DetailScreen(
         },
         floatingActionButton = {
             if (editMode) {
-                FloatingActionButton(onClick = { setEditMode(false) }, content = {
+                FloatingActionButton(onClick = {
+                    save()
+                    setEditMode(false) }, content = {
                     Image(
                         painter = painterResource(id = android.R.drawable.ic_menu_save),
                         contentDescription = stringResource(id = R.string.save)
@@ -116,8 +119,9 @@ fun DetailScreenPreview() {
             model.overallValueMode, { _ -> },
             model.fieldsValueMode, { _ -> },
             model.selectedBitField!!,
-            true,
-            { _ -> }
+            false,
+            { _ -> },
+            {}
         )
     }
 }

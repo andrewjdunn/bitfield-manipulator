@@ -5,6 +5,6 @@ import androidx.room.RoomDatabase
 
 @Database(entities = [BitField::class, BitFieldSection::class], version = 1)
 abstract class BitFieldDatabase :RoomDatabase() {
-    abstract fun bitFieldDAO() : BitFieldDAO
+    abstract fun bitFieldDao() : BitFieldDAO
 
 }

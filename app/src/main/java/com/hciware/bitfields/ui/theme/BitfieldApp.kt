@@ -48,7 +48,8 @@ fun BitfieldNavHost(navController: NavHostController) {
                         { mode -> bitFieldsViewModel.fieldsValueMode = mode },
                         selectedBitfield,
                         bitFieldsViewModel.editMode,
-                        { editMode -> bitFieldsViewModel.editMode = editMode}
+                        { editMode -> bitFieldsViewModel.editMode = editMode},
+                        {bitFieldsViewModel.save(selectedBitfield)}
                     )
                 }
             }
