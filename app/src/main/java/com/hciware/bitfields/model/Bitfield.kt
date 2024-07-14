@@ -347,7 +347,7 @@ data class BitField(val description: BitfieldDescription, val value: MutableStat
             // Purge empty field sections
             sections.removeIf { it.endBit - it.startBit < 0 }
         }
-        sections[sectionIndex] =
+        sections[sections.indexOf(section)] =
             BitfieldSection(this, section.name, section.startBit , section.endBit + 1, section.color)
     }
 
