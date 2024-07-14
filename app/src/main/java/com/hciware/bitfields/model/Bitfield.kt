@@ -90,7 +90,13 @@ private fun down(mask: ULong, field: Field) {
 
 data class BitfieldDescription (val id: Long, var name: MutableState<String>)
 
-data class BitfieldSection (val bitField: BitField, val name: String, override val startBit: Int, override val endBit: Int, var value: MutableState<String> = mutableStateOf("0")) : Field {
+data class BitfieldSection (
+    val bitField: BitField,
+    val name: String,
+    override val startBit: Int,
+    override val endBit: Int,
+    private val _color: Color = bitField.getNextColour(),
+    var value: MutableState<String> = mutableStateOf("0")) : Field {
     override fun setValue(newValue: String, radix: Int, mask: ULong) {
 
         if (newValue.isNotEmpty()) {
@@ -185,26 +191,14 @@ data class BitfieldSection (val bitField: BitField, val name: String, override v
             ULong.MAX_VALUE
         ) <= getMaxValueStr(10).toULong()
 
+    val colorConstant: Color get() = _color
 
-    private val _color = getColourForIndex(startBit)
     val color: Color
         get() =
             when (enabled) {
                 true -> _color
                 false -> Color.Transparent
             }
-
-    private fun getColourForIndex(index: Int) : Color {
-        return when ( index % 7) {
-            0 -> Color.Red.copy(alpha = 0.1f)
-            1 -> Color.Green.copy(alpha = 0.1f)
-            2 -> Color.Cyan.copy(alpha = 0.1f)
-            4 -> Color.Blue.copy(alpha = 0.1f)
-            5 -> Color.Magenta.copy(alpha = 0.1f)
-            6 -> Color.Yellow.copy(alpha = 0.1f)
-            else -> Color.Yellow.copy(alpha = 0.1f)
-        }
-    }
 }
 
 
@@ -227,7 +221,7 @@ data class BitField(val description: BitfieldDescription, val value: MutableStat
     }
 
     fun replaceBitfieldSection(newName:String, section: BitfieldSection) {
-        sections[sections.indexOf(section)] = BitfieldSection(this, newName, section.startBit, section.endBit)
+        sections[sections.indexOf(section)] = BitfieldSection(this, newName, section.startBit, section.endBit, section.colorConstant)
         refreshGapFieldSections()
     }
 
@@ -239,7 +233,20 @@ data class BitField(val description: BitfieldDescription, val value: MutableStat
             newBit = currentLeft.endBit + 1
         }
 
-        sections.add(0, BitfieldSection(this, "new", newBit, newBit))
+        sections.add(0, BitfieldSection(this, "new",  newBit, newBit, getNextColour()))
+    }
+
+    private var colorIndex: Int = 0
+    fun getNextColour() : Color {
+        return when ( colorIndex++ % 7) {
+            0 -> Color.Red.copy(alpha = 0.05f)
+            1 -> Color.Green.copy(alpha = 0.05f)
+            2 -> Color.Cyan.copy(alpha = 0.05f)
+            4 -> Color.Blue.copy(alpha = 0.05f)
+            5 -> Color.Magenta.copy(alpha = 0.05f)
+            6 -> Color.Yellow.copy(alpha = 0.05f)
+            else -> Color.Yellow.copy(alpha = 0.05f)
+        }
     }
 
     private fun refreshGapFieldSections() {
@@ -256,7 +263,7 @@ data class BitField(val description: BitfieldDescription, val value: MutableStat
                 println("Start before ${section.name} [${section.startBit} : ${section.endBit}] is $lastStart gap is $gap")
                 if(gap>1) {
                     println("Adding gap after ${section.name} Start ${lastStart-1} endBit ${section.endBit + 1}")
-                updateMap[sections.indexOf(section)] = BitfieldSection(this,"", section.endBit + 1, lastStart - 1)
+                updateMap[sections.indexOf(section)] = BitfieldSection(this,"", section.endBit + 1, lastStart - 1, getNextColour())
                 }
                 lastStart = section.startBit
             }
@@ -264,7 +271,7 @@ data class BitField(val description: BitfieldDescription, val value: MutableStat
             val endGap = lastStart - 0
             if(endGap > 0) {
                 println("Adding end gap  Start ${lastStart-1} endBit ${lastStart -1}")
-                updateMap[sections.size] = BitfieldSection(this,"", 0, lastStart - 1)
+                updateMap[sections.size] = BitfieldSection(this,"",  0,  lastStart - 1, getNextColour())
             }
 
             updateMap.forEach { (t, u) -> sections.add(t, u) }
@@ -333,14 +340,15 @@ data class BitField(val description: BitfieldDescription, val value: MutableStat
                 this,
                 sectionToLeft.name,
                 sectionToLeft.startBit + 1,
-                sectionToLeft.endBit
+                sectionToLeft.endBit,
+                sectionToLeft.color
             )
 
             // Purge empty field sections
             sections.removeIf { it.endBit - it.startBit < 0 }
         }
         sections[sectionIndex] =
-            BitfieldSection(this, section.name, section.startBit , section.endBit + 1)
+            BitfieldSection(this, section.name, section.startBit , section.endBit + 1, section.color)
     }
 
     fun expandFieldRight(section: BitfieldSection) {
@@ -354,10 +362,11 @@ data class BitField(val description: BitfieldDescription, val value: MutableStat
                 this,
                 sectionToRight.name,
                 sectionToRight.startBit,
-                sectionToRight.endBit - 1
+                sectionToRight.endBit - 1,
+                sectionToRight.color
             )
             sections[sectionIndex] =
-                BitfieldSection(this, section.name, section.startBit - 1, section.endBit)
+                BitfieldSection(this, section.name, section.startBit - 1, section.endBit, section.color)
 
             // Purge empty field sections
             sections.removeIf { it.endBit - it.startBit < 0 }

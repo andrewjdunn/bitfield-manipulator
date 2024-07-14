@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -21,11 +20,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -75,11 +74,6 @@ fun FieldList(
                 mode,
                 editMode
             )
-            VerticalDivider(
-                color = MaterialTheme.colorScheme.outlineVariant,
-                modifier = Modifier.offset(x = 2.5.dp)
-            )
-
         }
     }
 }
@@ -89,8 +83,8 @@ fun FieldList(
 fun PreviewFiledList() {
     val bitField = BitField(BitfieldDescription(0, mutableStateOf("Sample")))
     val sections = listOf(
-        BitfieldSection(bitField, name = "Section 2", startBit = 3, endBit = 6),
-        BitfieldSection(bitField, name = "Section 1", startBit = 0, endBit = 2)
+        BitfieldSection(bitField, name = "Section 2", startBit = 3, _color = Color.Green,endBit = 6),
+        BitfieldSection(bitField, name = "Section 1", startBit = 0, _color = Color.Cyan ,endBit = 2)
     )
     BitfieldmanipulatorTheme {
         FieldList(
