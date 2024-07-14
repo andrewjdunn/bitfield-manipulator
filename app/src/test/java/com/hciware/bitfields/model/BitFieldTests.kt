@@ -61,8 +61,8 @@ class BitFieldTests {
 
         // Test
         assertEquals("21", bitfield.value.value)
-        assertEquals("10", bitfield.sections[1].value.value)
-        assertEquals("1", bitfield.sections[2].value.value)
+        assertEquals("10", bitfield.sections[0].value.value)
+        assertEquals("1", bitfield.sections[1].value.value)
     }
 
     @Test
@@ -76,7 +76,7 @@ class BitFieldTests {
         // Test
         val startField = bitField.startBit
         val endField = bitField.endBit
-        val startFields = bitField.sections[2].startBit
+        val startFields = bitField.sections[1].startBit
         val endFields = bitField.sections[0].endBit
 
         // Verify
@@ -85,21 +85,22 @@ class BitFieldTests {
     }
 
     @Test
-    fun bitfield_up_result_data() {
+    fun bitfield_up_result_data() = runTest {
         // Setup
         val bitfield = BitFieldsViewModel().addSampledData().bitfields[1]
+        val bitfield  = model.bitfields[1]
 
         // Test & Verify
         assertEquals("0", bitfield.value.value)
-        bitfield.sections[5].up(0b1U)
-        assertEquals("1", bitfield.value.value)
-        assertEquals("1", bitfield.sections[5].value.value)
-        assertEquals("0", bitfield.sections[4].value.value)
-
         bitfield.sections[4].up(0b1U)
-        assertEquals("33", bitfield.value.value)
-        assertEquals("1", bitfield.sections[5].value.value)
+        assertEquals("1", bitfield.value.value)
         assertEquals("1", bitfield.sections[4].value.value)
+        assertEquals("0", bitfield.sections[3].value.value)
+
+        bitfield.sections[3].up(0b1U)
+        assertEquals("33", bitfield.value.value)
+        assertEquals("1", bitfield.sections[4].value.value)
+        assertEquals("1", bitfield.sections[3].value.value)
     }
 
     @Test
@@ -115,48 +116,48 @@ class BitFieldTests {
         // Test & Verify
         assertEquals("0", bitfield.value.value)
         // Increase the first bit
-        bitfield.sections[4].up(0b1u)
-        assertEquals("1", bitfield.sections[4].value.value)
+        bitfield.sections[3].up(0b1u)
+        assertEquals("1", bitfield.sections[3].value.value)
         assertEquals("1", bitfield.value.value)
 
         // Increase the first bit again
-        bitfield.sections[4].up(0b1u)
-        assertEquals("1", bitfield.sections[4].value.value)
+        bitfield.sections[3].up(0b1u)
+        assertEquals("1", bitfield.sections[3].value.value)
         assertEquals("1", bitfield.value.value)
 
         // Increase the second bit
-        bitfield.sections[4].up(0b10u)
-        assertEquals("3", bitfield.sections[4].value.value)
+        bitfield.sections[3].up(0b10u)
+        assertEquals("3", bitfield.sections[3].value.value)
         assertEquals("3", bitfield.value.value)
 
         // Increase the second bit again
-        bitfield.sections[4].up(0b10u)
-        assertEquals("3", bitfield.sections[4].value.value)
+        bitfield.sections[3].up(0b10u)
+        assertEquals("3", bitfield.sections[3].value.value)
         assertEquals("3", bitfield.value.value)
 
         // Now the first bit in the second field (third bit (bit 2))
-        bitfield.sections[3].up(0b1u)
-        assertEquals("1", bitfield.sections[3].value.value)
+        bitfield.sections[2].up(0b1u)
+        assertEquals("1", bitfield.sections[2].value.value)
         assertEquals("7", bitfield.value.value)
 
         // And Again
-        bitfield.sections[3].up(0b1u)
-        assertEquals("1", bitfield.sections[3].value.value)
+        bitfield.sections[2].up(0b1u)
+        assertEquals("1", bitfield.sections[2].value.value)
         assertEquals("7", bitfield.value.value)
 
         // Increase the highest bit
-        bitfield.sections[1].up(0b10u)
-        assertEquals("2", bitfield.sections[1].value.value)
+        bitfield.sections[0].up(0b10u)
+        assertEquals("2", bitfield.sections[0].value.value)
         assertEquals("135", bitfield.value.value)
 
         // Increase the second highest bit
-        bitfield.sections[1].up(0b1u)
-        assertEquals("3", bitfield.sections[1].value.value)
+        bitfield.sections[0].up(0b1u)
+        assertEquals("3", bitfield.sections[0].value.value)
         assertEquals("199", bitfield.value.value)
 
         bitfield.up(0b1000u)
         assertEquals("207", bitfield.value.value)
-        assertEquals("3", bitfield.sections[3].value.value)
+        assertEquals("3", bitfield.sections[2].value.value)
     }
 
     @Test
@@ -190,13 +191,13 @@ class BitFieldTests {
         bitfield.setValue("11111111", 2)
 
         // Test
-        bitfield.sections[2].setValue("")
+        bitfield.sections[1].setValue("")
 
         // Verify
-        assertEquals("", bitfield.sections[2].getValue(2))
-        assertEquals("11", bitfield.sections[1].getValue(2))
+        assertEquals("", bitfield.sections[1].getValue(2))
+        assertEquals("11", bitfield.sections[0].getValue(2))
+        assertEquals("11", bitfield.sections[2].getValue(2))
         assertEquals("11", bitfield.sections[3].getValue(2))
-        assertEquals("11", bitfield.sections[4].getValue(2))
         assertEquals("11001111", bitfield.getValue(2))
     }
 
@@ -211,14 +212,13 @@ class BitFieldTests {
         bitfield.setValue("11111111", 2)
 
         // Test
-        bitfield.sections[1].setValue("", 10, 0b11UL)
+        bitfield.sections[0].setValue("", 10, 0b11UL)
 
         // Verify
-        assertEquals("0", bitfield.sections[0].getValue(2))
-        assertEquals("", bitfield.sections[1].getValue(2))
+        assertEquals("", bitfield.sections[0].getValue(2))
+        assertEquals("11", bitfield.sections[1].getValue(2))
         assertEquals("11", bitfield.sections[2].getValue(2))
         assertEquals("11", bitfield.sections[3].getValue(2))
-        assertEquals("11", bitfield.sections[4].getValue(2))
         assertEquals("111111", bitfield.getValue(2))
     }
 
@@ -233,13 +233,13 @@ class BitFieldTests {
         bitfield.setValue("11111111", 2)
 
         // Test
-        bitfield.sections[4].setValue("", 2, 0b11UL)
+        bitfield.sections[3].setValue("", 2, 0b11UL)
 
         // Verify
+        assertEquals("11", bitfield.sections[0].getValue(2))
         assertEquals("11", bitfield.sections[1].getValue(2))
         assertEquals("11", bitfield.sections[2].getValue(2))
-        assertEquals("11", bitfield.sections[3].getValue(2))
-        assertEquals("", bitfield.sections[4].getValue(2))
+        assertEquals("", bitfield.sections[3].getValue(2))
         assertEquals("11111100", bitfield.getValue(2))
     }
 
@@ -257,11 +257,10 @@ class BitFieldTests {
         bitfield.setValue("", 10, 0b100UL)
 
         // Verify
-        assertEquals("0", bitfield.sections[0].getValue(2))
+        assertEquals("11", bitfield.sections[0].getValue(2))
         assertEquals("11", bitfield.sections[1].getValue(2))
-        assertEquals("11", bitfield.sections[2].getValue(2))
-        assertEquals("10", bitfield.sections[3].getValue(2))
-        assertEquals("11", bitfield.sections[4].getValue(2))
+        assertEquals("10", bitfield.sections[2].getValue(2))
+        assertEquals("11", bitfield.sections[3].getValue(2))
         assertEquals("11111011", bitfield.getValue(2))
     }
 

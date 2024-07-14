@@ -256,11 +256,6 @@ data class BitField(val description: BitfieldDescription, val value: MutableStat
                 updateMap[sections.size] = BitfieldSection(this,"", 0, lastStart - 1)
             }
 
-            if(sections[0].enabled) {
-                updateMap[0] = BitfieldSection(this,"", sections[0].endBit+1, sections[0].endBit + 1)
-
-            }
-
             updateMap.forEach { (t, u) -> sections.add(t, u) }
             sections.forEach{ println(" section $it") }
         }
