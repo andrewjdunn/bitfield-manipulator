@@ -2,4 +2,5 @@
 <resources>
     <dimen name="width_per_bit">50dp</dimen>
     <dimen name="bit_padding">5dp</dimen>
+    <dimen name="add_left_box">30dp</dimen>
 </resources>

@@ -7,12 +7,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.hciware.bitfields.R
 import com.hciware.bitfields.model.BitFieldsViewModel
 import com.hciware.bitfields.model.BitfieldSection
 import com.hciware.bitfields.model.Field
@@ -26,6 +30,7 @@ fun DetailContent(fields: List<BitfieldSection>,
                   fieldValuesModeSelected: (BitFieldsViewModel.RadixMode) -> Unit,
                   overallField: Field,
                   editMode: Boolean,
+                  addSectionLeft: () -> Unit,
                   modifier: Modifier = Modifier) {
     Column (modifier.verticalScroll(rememberScrollState())) {
         val commonScrollState = rememberScrollState()
@@ -39,9 +44,16 @@ fun DetailContent(fields: List<BitfieldSection>,
                 .horizontalScroll(commonScrollState)
                 .matchParentSize()
             ) {
-                FieldBackgrounds(fields)
+                Row {
+                    Surface(modifier = Modifier .width(dimensionResource(id = R.dimen.add_left_box))){}
+                    FieldBackgrounds(fields)
+                }
             }
-            BitRuler(commonScrollState, bitCount = overallField.endBit)
+            Row(modifier = Modifier.horizontalScroll(commonScrollState)) {
+                Surface(modifier = Modifier
+                    .width(dimensionResource(id = R.dimen.add_left_box))){}
+                BitRuler(bitCount = overallField.endBit)
+            }
         }
 
         FieldValues(
@@ -49,7 +61,8 @@ fun DetailContent(fields: List<BitfieldSection>,
             fieldValuesMode,
             fieldValuesModeSelected,
             commonScrollState,
-            editMode)
+            editMode,
+            addSectionLeft)
     }
 }
 
@@ -66,6 +79,7 @@ fun PreviewDetailContent() {
             {_ ->},
             model.selectedBitField!!,
             editMode = true,
+            {},
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background))

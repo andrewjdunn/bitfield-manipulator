@@ -7,9 +7,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,6 +29,7 @@ fun FieldValues(
     modeSelected: (BitFieldsViewModel.RadixMode) -> Unit,
     commonScrollState: ScrollState,
     editMode: Boolean,
+    addSectionLeft: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -34,12 +38,14 @@ fun FieldValues(
             .horizontalScroll(commonScrollState)
             .matchParentSize()
         ) {
+            Surface(modifier = Modifier
+                .width(dimensionResource(id = R.dimen.add_left_box))){}
             FieldBackgrounds(fields)
         }
 
         Column(modifier) {
             RadixSelector(title = stringResource(id = R.string.field_values), mode, modeSelected,  modifier = Modifier.padding(horizontal = 10.dp))
-            FieldList(fields, mode, commonScrollState, editMode)
+            FieldList(fields, mode, commonScrollState, editMode, addSectionLeft)
         }
     }
 }
@@ -56,6 +62,7 @@ fun PreviewFieldValues() {
             { _ -> },
             rememberScrollState(),
             false,
+            {},
             Modifier.fillMaxWidth()
         )
     }

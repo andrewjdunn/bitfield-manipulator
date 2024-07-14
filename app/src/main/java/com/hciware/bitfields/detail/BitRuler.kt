@@ -21,13 +21,8 @@ import com.hciware.bitfields.R
 import com.hciware.bitfields.ui.theme.BitfieldmanipulatorTheme
 
 @Composable
-fun BitRuler(commonScrollState: ScrollState, bitCount: Int, modifier: Modifier = Modifier) {
-    Row(
-        modifier
-            .horizontalScroll(
-                commonScrollState
-            )
-    ) {
+fun BitRuler(bitCount: Int) {
+    Row {
         for (bit in bitCount.downTo(0)) {
             Surface(
                 shape = MaterialTheme.shapes.small,
@@ -51,10 +46,6 @@ fun BitRuler(commonScrollState: ScrollState, bitCount: Int, modifier: Modifier =
 @Composable
 fun PreviewButRuler() {
     BitfieldmanipulatorTheme {
-        BitRuler(
-            rememberScrollState(),
-            bitCount = 32,
-            modifier = Modifier.fillMaxWidth()
-        )
+        BitRuler(bitCount = 32)
     }
 }

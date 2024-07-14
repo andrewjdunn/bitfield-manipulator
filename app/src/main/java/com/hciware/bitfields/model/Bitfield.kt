@@ -231,6 +231,17 @@ data class BitField(val description: BitfieldDescription, val value: MutableStat
         refreshGapFieldSections()
     }
 
+    fun addSectionLeft() {
+        var newBit = 0
+        if(sections.size > 0)
+        {
+            val currentLeft = sections[0]
+            newBit = currentLeft.endBit + 1
+        }
+
+        sections.add(0, BitfieldSection(this, "new", newBit, newBit))
+    }
+
     private fun refreshGapFieldSections() {
         if(sections.size > 1)
         {

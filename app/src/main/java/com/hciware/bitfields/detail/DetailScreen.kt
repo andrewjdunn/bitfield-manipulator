@@ -43,6 +43,7 @@ fun DetailScreen(
     editMode: Boolean,
     setEditMode: (Boolean) -> Unit,
     save: () -> Unit,
+    addSectionLeft: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -98,6 +99,7 @@ fun DetailScreen(
                 fieldValuesModeSelected,
                 overallField,
                 editMode,
+                addSectionLeft,
                 modifier.padding(padding)
             )
         })
@@ -121,6 +123,7 @@ fun DetailScreenPreview() {
             model.selectedBitField!!,
             false,
             { _ -> },
+            {},
             {}
         )
     }
