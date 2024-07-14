@@ -19,12 +19,9 @@ import kotlinx.coroutines.withContext
 
 class BitFieldsViewModel(application: Application = Application()) : AndroidViewModel(application) {
 
-    // TODO: This means none of the previews work as they use the model.. need to separate this
-    private val db = Room.databaseBuilder(
-        context = application,
-        BitFieldDatabase::class.java, "bitfield"
-    ).build()
 
+    private val _bitfieldList: BitfieldListData = if (application.baseContext == null)
+        SampleBitfieldListData() else DatabaseBitfieldListData(application)
     private val _bitfields = mutableStateListOf<BitField>()
 
     enum class RadixMode {
@@ -47,11 +44,9 @@ class BitFieldsViewModel(application: Application = Application()) : AndroidView
     var editMode: Boolean by mutableStateOf(false)
 
     init {
-        val bitfieldDao = db.bitFieldDao()
-
         viewModelScope.launch(Dispatchers.IO) {
 
-            val bitfields = bitfieldDao.getBitfieldsWithSections()
+            val bitfields = _bitfieldList.getBitfieldsWithSections()
 
             withContext(Dispatchers.Main) {
                 bitfields.forEach { bitFieldWithSections ->
@@ -81,17 +76,16 @@ class BitFieldsViewModel(application: Application = Application()) : AndroidView
                 nextId,
                 mutableStateOf("new")
             )
-        ).addBitfieldSection("new", 0, 3)
+        )
         _bitfields.add(bf)
 
         viewModelScope.launch(Dispatchers.IO) {
-            val bitfieldDao = db.bitFieldDao()
-            val bfId = bitfieldDao.insertBitField(com.hciware.bitfields.database.BitField(
+            val bfId = _bitfieldList.insertBitField(com.hciware.bitfields.database.BitField(
                 bf.description.id,
                 bf.description.name.value
             ))
             bf.sections.forEach {
-                bitfieldDao.insertBitFieldSection(
+                _bitfieldList.insertBitFieldSection(
                     BitFieldSection(
                         bitFieldId = bfId,
                         name = it.name,
@@ -106,27 +100,24 @@ class BitFieldsViewModel(application: Application = Application()) : AndroidView
     fun delete(bitfield: BitField) {
         _bitfields.remove(bitfield)
         viewModelScope.launch(Dispatchers.IO) {
-            val bitfieldDao = db.bitFieldDao()
-            bitfieldDao.delete(com.hciware.bitfields.database.BitField(bitfield.description.id, bitfield.description.name.value))
-            bitfieldDao.deleteFieldSections(bitFieldId = bitfield.description.id)
+            _bitfieldList.delete(com.hciware.bitfields.database.BitField(bitfield.description.id, bitfield.description.name.value))
         }
     }
 
     fun save(bitfield: BitField) {
         viewModelScope.launch(Dispatchers.IO) {
-            val bitfieldDao = db.bitFieldDao()
-            bitfieldDao.updateBitField(
+            _bitfieldList.updateBitField(
                 com.hciware.bitfields.database.BitField(
                     fieldId = bitfield.description.id,
                     name = bitfield.description.name.value))
 
             // Update or delete the sections.. TODO: Think I'm making this all a bit too hard.. but anyway
             // TODO: Delete and add again.. not all that nice
-            bitfieldDao.deleteFieldSections(bitFieldId = bitfield.description.id)
+            _bitfieldList.deleteFieldSections(bitFieldId = bitfield.description.id)
 
             // TODO: Also - this is a C&P
             bitfield.sections.forEach {
-                bitfieldDao.insertBitFieldSection(
+                _bitfieldList.insertBitFieldSection(
                     BitFieldSection(
                         bitFieldId = bitfield.description.id,
                         name = it.name,
@@ -138,28 +129,5 @@ class BitFieldsViewModel(application: Application = Application()) : AndroidView
 
         }
     }
-
-    fun addSampledData(): BitFieldsViewModel {
-        _bitfields.addAll(getSampleBitFields())
-        return this
-    }
-
-
-    private fun getSampleBitFields() = listOf(
-        BitField(
-            BitfieldDescription(1, mutableStateOf("IPV4 Address"))
-        )
-            .addBitfieldSection("Octet 4", 24, 31)
-            .addBitfieldSection("Octet 3", 16, 23)
-            .addBitfieldSection("Octet 2", 8, 15)
-            .addBitfieldSection("Octet 1", 0, 7),
-        BitField(
-            BitfieldDescription(2, mutableStateOf("Result"))
-        )
-            .addBitfieldSection("Stored", 12, 12)
-            .addBitfieldSection("Success", 11, 11)
-            .addBitfieldSection("Label 1", 5, 9)
-            .addBitfieldSection("Box Color", 0, 4)
-    )
 }
 

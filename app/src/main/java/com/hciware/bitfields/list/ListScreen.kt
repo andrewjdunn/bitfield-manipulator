@@ -45,7 +45,7 @@ fun ListScreen(
 @Preview
 @Composable
 fun ListScreenPreview(){
-    val model = BitFieldsViewModel().addSampledData()
+    val model = BitFieldsViewModel()
     BitfieldmanipulatorTheme {
         ListScreen(
             selectBitField = {},

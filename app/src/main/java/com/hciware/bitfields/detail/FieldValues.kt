@@ -49,7 +49,7 @@ fun FieldValues(
 fun PreviewFieldValues() {
     BitfieldmanipulatorTheme {
         // TODO: Another creeping problem - are bits always described as 1 based or 0..
-        val model = BitFieldsViewModel().addSampledData()
+        val model = BitFieldsViewModel()
         FieldValues(
             model.bitfields[1].sections,
             model.fieldsValueMode,

@@ -19,20 +19,14 @@ interface BitFieldDAO {
     @Update
     fun updateBitField(bitfield: BitField)
 
-    @Update
-    fun updateBitFieldSection(bitfield: BitFieldSection)
-
     @Delete
     fun delete(bitField: BitField)
 
     @Query("DELETE FROM bitfield_section where bitFieldId = :bitFieldId")
     fun deleteFieldSections(bitFieldId: Long)
 
+        @Transaction
     @Query("SELECT * FROM bitfields")
-    fun loadAllBitFields() : Array<BitField>
-
-    @Transaction
-    @Query("SELECT * FROM bitfields")
-    suspend fun getBitfieldsWithSections(): List<BitFieldWithSections>
+    fun getBitfieldsWithSections(): List<BitFieldWithSections>
 
 }

@@ -97,7 +97,7 @@ fun FieldDefinitionEditor(field: BitfieldSection, modifier: Modifier = Modifier)
 @Preview
 @Composable
 fun PreviewFieldDefinitionEditor() {
-    val model = BitFieldsViewModel().addSampledData()
+    val model = BitFieldsViewModel()
     val field = model.bitfields[1].sections[3]
     BitfieldmanipulatorTheme {
         Surface(

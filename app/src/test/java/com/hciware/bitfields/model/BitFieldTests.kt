@@ -2,6 +2,9 @@ package com.hciware.bitfields.model
 
 import androidx.compose.runtime.mutableStateOf
 import io.kotest.core.spec.style.AnnotationSpec
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -84,10 +87,12 @@ class BitFieldTests {
         assertEquals(endField, endFields)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun bitfield_up_result_data() = runTest {
         // Setup
-        val bitfield = BitFieldsViewModel().addSampledData().bitfields[1]
+        val model = BitFieldsViewModel()
+        advanceUntilIdle()
         val bitfield  = model.bitfields[1]
 
         // Test & Verify

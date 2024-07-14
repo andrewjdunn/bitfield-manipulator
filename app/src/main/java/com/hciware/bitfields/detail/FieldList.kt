@@ -60,7 +60,7 @@ fun FieldList(
 @Preview
 @Composable
 fun PreviewFiledList() {
-    val model = BitFieldsViewModel().addSampledData()
+    val model = BitFieldsViewModel()
     BitfieldmanipulatorTheme {
         FieldList(
             fields = model.bitfields[1].sections,
@@ -115,7 +115,7 @@ fun Field(
 @Preview
 @Composable
 fun PreviewField() {
-    val model = BitFieldsViewModel().addSampledData()
+    val model = BitFieldsViewModel()
     val field = model.bitfields[0].sections[0]
     BitfieldmanipulatorTheme {
         Field(

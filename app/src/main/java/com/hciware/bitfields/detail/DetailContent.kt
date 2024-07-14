@@ -56,7 +56,7 @@ fun DetailContent(fields: List<BitfieldSection>,
 @Preview
 @Composable
 fun PreviewDetailContent() {
-    val model = BitFieldsViewModel(Application()).addSampledData()
+    val model = BitFieldsViewModel(Application())
     model.selectedBitField = model.bitfields[0]
     BitfieldmanipulatorTheme {
         DetailContent(model.bitfields[1].sections,
