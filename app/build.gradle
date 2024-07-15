@@ -1,15 +1,28 @@
-apply plugin: 'com.android.application'
+plugins {
+    alias libs.plugins.android.application
+    alias libs.plugins.google.devtools.ksp
+    alias libs.plugins.kotlin
+    alias libs.plugins.compose.compiler
+}
 
 android {
     compileSdk 34
     defaultConfig {
         applicationId "com.hciware.bitfields"
-        minSdkVersion 31
+        minSdkVersion 30
         targetSdkVersion 34
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
     }
+
+    buildFeatures {
+        compose true
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -17,14 +30,58 @@ android {
         }
     }
     namespace 'com.hciware.bitfields'
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
-    buildToolsVersion '34.0.0'
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    packaging {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+
+    testOptions {
+        unitTests.all {
+            it.useJUnitPlatform()
+        }
+    }
 }
 
 dependencies {
-testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'junit:junit:4.12'
+    implementation libs.android.ktx
+    implementation libs.androidx.viewmodel.compose
+    implementation libs.androidx.compose.ui
+    implementation libs.androidx.compose.ui.graphics
+    implementation libs.androidx.navigation.compose
+    implementation libs.androidx.compose.ui.tooling.preview
+    debugImplementation libs.androidx.compose.ui.tooling
+
+    def composeBom = libs.androidx.compose.bom
+    implementation composeBom
+    androidTestImplementation composeBom
+
+    // Material Design 3
+    implementation libs.androidx.material3
+
+    def room_version = "2.6.1"
+    implementation libs.androidx.room.runtime
+    implementation libs.androidx.room.ktx
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    ksp "androidx.room:room-compiler:$room_version"
+
+    // UI Tests
+    androidTestImplementation libs.androidx.ui.test.junit4
+    debugImplementation libs.androidx.ui.test.manifest
+
+    implementation libs.androidx.activity.compose
+
+    testImplementation libs.junit.jupiter.engine
+    testImplementation libs.kotest.runner.junit5.jvm
+    testImplementation libs.kotest.runner.junit5
+
+    testImplementation libs.kotest.framework.datatest.jvm
 }
